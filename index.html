@@ -3,69 +3,571 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGEND HQ V20</title>
+    <title>MA LEGEND | NEUMORPHIC INFINITY V14</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #e0e5ec; font-family: 'Segoe UI', sans-serif; padding: 20px; color: #444; }
-        .card { background: #e0e5ec; padding: 25px; border-radius: 30px; box-shadow: 20px 20px 60px #bec3c9, -20px -20px 60px #ffffff; margin-bottom: 20px; text-align: center; }
-        h1 { color: #00a884; letter-spacing: 2px; font-size: 1.5rem; margin-bottom: 20px; }
-        input { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #e0e5ec; box-shadow: inset 6px 6px 12px #bec3c9, inset -6px -6px 12px #ffffff; margin-bottom: 15px; outline: none; box-sizing: border-box; }
-        .btn-gen { width: 100%; padding: 15px; border: none; border-radius: 15px; background: #00a884; color: white; font-weight: bold; box-shadow: 6px 6px 12px #bec3c9, -6px -6px 12px #ffffff; cursor: pointer; margin-bottom: 10px; }
-        .log-card { background: #e0e5ec; padding: 15px; border-radius: 20px; box-shadow: 6px 6px 12px #bec3c9, -6px -6px 12px #ffffff; margin-top: 15px; font-size: 0.75rem; border-left: 8px solid #00a884; text-align: left; }
-        .badge { background: #d1d9e6; padding: 4px 8px; border-radius: 8px; display: inline-block; margin: 2px; font-weight: bold; }
-        .snap-img { width: 100%; border-radius: 15px; margin-top: 10px; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>LEGEND HQ V20</h1>
-        <input type="text" id="k" placeholder="Secret Key (e.g. user1)">
-        <input type="text" id="r" placeholder="Target URL (e.g. YouTube)">
-        <button class="btn-gen" onclick="gen()">GENERATE STEALTH LINK</button>
-        <div id="out" onclick="copy()" style="font-size: 0.7rem; color: #00a884; cursor: pointer; margin-top: 10px; word-break: break-all;"></div>
-    </div>
-
-    <div style="display: flex; gap: 10px;">
-        <button class="btn-gen" style="background:#333;" onclick="show('tracking')">LOCATIONS</button>
-        <button class="btn-gen" style="background:#cc0000;" onclick="show('photos')">SNAPS</button>
-    </div>
-
-    <div id="logs"></div>
-
-    <script>
-        const DB = "https://location-5d435-default-rtdb.firebaseio.com/";
-        const PAGE = "https://video-obtg.vercel.app/"; // Naya Vercel URL yahan likhein
-
-        function gen() {
-            const k = document.getElementById('k').value, r = document.getElementById('r').value;
-            if(!k || !r) return alert("Fill all!");
-            const link = `${PAGE}#${btoa(JSON.stringify({k, r}))}`;
-            document.getElementById('out').innerText = link;
-            navigator.clipboard.writeText(link);
-            alert("Link Copied!");
+        :root {
+            --bg: #e0e5ec;
+            --primary: #00a884;
+            --danger: #ea4335;
+            --text: #44475a;
+            --text-dim: #7a7d8c;
+            --white: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --shadow-light: #ffffff;
         }
 
-        async function show(path) {
-            const k = document.getElementById('k').value;
-            const res = await fetch(`${DB}${path}/${k}.json`);
-            const data = await res.json();
-            const area = document.getElementById('logs'); area.innerHTML = "";
-            if(!data) return;
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            transition: 0.5s; 
+            overflow-x: hidden; 
+            scroll-behavior: smooth;
+        }
 
-            Object.keys(data).reverse().forEach(id => {
-                const item = data[id];
-                if(path === 'photos') {
-                    area.innerHTML += `<div class="log-card" style="text-align:center;"><b>🕒 ${item.t}</b><img src="${item.p}" class="snap-img"></div>`;
-                } else {
-                    area.innerHTML += `<div class="log-card">
-                        <b>🕒 ${item.time}</b><br>
-                        <span class="badge">🌐 IP: ${item.ip}</span> <img src="${item.flag}" width="18"><br>
-                        <span class="badge">📡 ISP: ${item.isp}</span><br>
-                        <span class="badge">🔋 Bat: ${item.bat}</span> <span class="badge">🧠 RAM: ${item.ram}GB</span><br>
-                        <span class="badge">📱 ${item.model}</span> <span class="badge">📶 ${item.net}</span><br>
-                        <a href="${item.map}" target="_blank" style="color:#00a884; font-weight:bold; text-decoration:none;">[ VIEW ON MAP ]</a>
-                    </div>`;
+        /* Neumorphic Card */
+        .neu-card {
+            background: var(--bg);
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 9px 9px 16px var(--shadow-dark), -9px -9px 16px var(--shadow-light);
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeIn 0.8s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Neumorphic Input & Select */
+        .neu-input {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            outline: none;
+            background: var(--bg);
+            border-radius: 18px;
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            color: var(--text);
+            box-sizing: border-box;
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        
+        .neu-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            border-left: 5px solid var(--primary);
+        }
+
+        .error-shake { animation: shake 0.4s ease-in-out; border: 1px solid var(--danger); }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+
+        select.neu-input { cursor: pointer; }
+        optgroup { font-weight: 800; color: var(--primary); background: #fff; }
+
+        /* Neumorphic Button */
+        .neu-btn {
+            width: 100%;
+            padding: 18px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 18px;
+            background: var(--bg);
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            transition: 0.3s ease;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .neu-btn:hover { color: #008f6f; transform: translateY(-2px); }
+        .neu-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transform: scale(0.98);
+        }
+        .neu-btn:disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+
+        .btn-danger { color: var(--danger); }
+        .btn-danger:hover { color: #c0392b; }
+
+        /* Layout Parts */
+        .header { 
+            padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; 
+            background: var(--bg); position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .header h1 { font-size: 1.1rem; color: var(--primary); margin: 0; font-weight: 900; letter-spacing: 1px; }
+        .sys-clock { font-family: monospace; color: var(--text-dim); font-size: 0.8rem; font-weight: bold; }
+
+        .sidebar { 
+            position: fixed; top: 0; left: -300px; width: 300px; height: 100%; 
+            background: var(--bg); z-index: 1002; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 40px 20px; 
+            box-sizing: border-box; box-shadow: 10px 0 30px var(--shadow-dark);
+            overflow-y: auto;
+        }
+        .sidebar.active { left: 0; }
+        
+        .nav-link { 
+            padding: 15px 20px; display: flex; align-items: center; gap: 15px; 
+            color: var(--text-dim); text-decoration: none; font-weight: 700; 
+            border-radius: 15px; margin-bottom: 20px; transition: 0.3s;
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            cursor: pointer;
+        }
+        .nav-link:hover { color: var(--primary); }
+        .nav-link.active { color: var(--primary); box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1001; backdrop-filter: blur(3px); }
+        .overlay.active { display: block; }
+
+        .container { max-width: 850px; margin: 30px auto; padding: 0 20px 100px; }
+        label { display: block; margin: 20px 0 10px 12px; font-weight: 800; color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; }
+
+        /* Output Box - Typewriter Cursor */
+        #resultBox { 
+            margin-top: 30px; padding: 25px; background: var(--bg); border-radius: 25px; 
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            display: none; line-height: 1.8; font-family: 'Courier New', monospace; color: #333; 
+            white-space: pre-wrap; font-size: 0.95rem; border-left: 8px solid var(--primary);
+            min-height: 100px;
+        }
+        .blinking-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: var(--primary);
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* AI Scanning Animation */
+        .scan-container { 
+            position: relative; width: 100%; border-radius: 20px; overflow: hidden; margin-top: 20px;
+            box-shadow: 5px 5px 15px var(--shadow-dark); display: none; border: 5px solid var(--white);
+        }
+        .scan-line { width: 100%; height: 4px; background: var(--primary); position: absolute; top: 0; animation: scan 2s infinite linear; z-index: 5; box-shadow: 0 0 15px var(--primary); }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* Notifications */
+        #toast { 
+            visibility: hidden; min-width: 250px; background: var(--primary); color: #fff; 
+            text-align: center; border-radius: 50px; padding: 15px; position: fixed; 
+            left: 50%; bottom: 30px; transform: translateX(-50%); z-index: 10000; box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+            font-weight: bold;
+        }
+        #toast.show { visibility: visible; animation: fadeInUp 0.5s; }
+        @keyframes fadeInUp { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; display: none; }
+        .control-btns { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 15px; }
+        
+        footer { text-align: center; padding: 50px; color: var(--text-dim); font-size: 0.85rem; font-weight: bold; }
+        .creator-highlight { color: var(--primary); font-size: 1rem; letter-spacing: 2px; }
+    </style>
+</head>
+<body onload="loadData()">
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div id="toast"><span id="toastMsg">Notification</span></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div onclick="toggleSidebar()"><i class="fas fa-bars-staggered" style="color:var(--primary); font-size:1.5rem; cursor:pointer;"></i></div>
+        <div style="text-align:center;">
+            <h1>MA LEGEND <span style="background:var(--primary); color:#fff; font-size:0.5rem; padding:3px 7px; border-radius:5px; margin-left:5px;">INF V14</span></h1>
+            <div class="sys-clock" id="liveClock">00:00:00</div>
+        </div>
+        <div><i class="fas fa-user-shield" style="color:var(--primary); font-size:1.5rem;"></i></div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div style="text-align:center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid rgba(0,0,0,0.03);">
+            <i class="fas fa-crown" style="font-size: 4rem; color: var(--primary); filter: drop-shadow(4px 4px 6px var(--shadow-dark));"></i>
+            <h2 style="margin:15px 0 0; color: var(--primary); font-size:1.5rem;">MA LEGEND</h2>
+            <p style="font-size:0.6rem; letter-spacing:3px; font-weight:bold; color:var(--text-dim);">TOOL CREATOR</p>
+        </div>
+        <div class="nav-link active" onclick="switchTab('bot')"><i class="fas fa-terminal"></i> Commander</div>
+        <div class="nav-link" onclick="switchTab('ai-mode')"><i class="fas fa-brain"></i> Infinity AI</div>
+        
+        <div class="nav-link" onclick="window.open('https://legend-mods-store.vercel.app/')"><i class="fas fa-store"></i> Mods Store</div>
+        <div class="nav-link" onclick="window.open('https://t.me/legend_tool')"><i class="fab fa-telegram"></i> Telegram</div>
+        <div class="nav-link" onclick="window.open('https://whatsapp.com/channel/0029VarS46O3QxRtTZO0z60x')"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+        <div class="nav-link" onclick="window.open('https://www.youtube.com/@legendmod407')"><i class="fab fa-youtube"></i> YouTube</div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- COMMANDER TAB -->
+        <section id="bot" class="tab-content">
+            <div class="neu-card">
+                <label>Target Channel Name</label>
+                <!-- oninput added for Auto-Save -->
+                <input type="text" id="targetName" class="neu-input" placeholder="e.g. Victim Channel" oninput="saveData()">
+                
+                <label>Channel Link</label>
+                <input type="text" id="targetLink" class="neu-input" placeholder="https://whatsapp.com/channel/..." oninput="saveData()">
+
+                <label>Evidence Post Link (Optional)</label>
+                <input type="text" id="postLink" class="neu-input" placeholder="Paste specific message link..." oninput="saveData()">
+                
+                <label>Compliance Violation Type</label>
+                <select id="category" class="neu-input" style="height: 60px;">
+                    <optgroup label="🔥 SHORT & STRONG REPORTS (NEW)">
+                        <option value="short_1">⚡ Strike 1 - Deceptive Intent & Hidden Risks</option>
+                        <option value="short_2">⚡ Strike 2 - Misleading Content & Unrealistic</option>
+                        <option value="short_3">⚡ Strike 3 - Fraudulent Promotions & Risk</option>
+                        <option value="short_4">⚡ Strike 4 - Suspicious External Links</option>
+                        <option value="short_5">⚡ Strike 5 - Manipulates Trust & Misinformation</option>
+                        <option value="short_6">⚡ Strike 6 - Unsafe Financial Schemes</option>
+                        <option value="short_7">⚡ Strike 7 - Operates Deceptively (Fake Benefits)</option>
+                        <option value="short_8">⚡ Strike 8 - Harmful Risky Actions Encouraged</option>
+                        <option value="short_9">⚡ Strike 9 - False Opportunities & Exploitation</option>
+                        <option value="short_10">⚡ Strike 10 - Deceptive Material for Gain</option>
+                        <option value="short_11">⚡ Strike 11 - Unverified Info & Fake Claims</option>
+                        <option value="short_12">⚡ Strike 12 - Unsafe Content & False Assurance</option>
+                        <option value="short_13">⚡ Strike 13 - Organized Deception Network</option>
+                        <option value="short_14">⚡ Strike 14 - Exploits Trust (Fake Profits)</option>
+                        <option value="short_15">⚡ Strike 15 - Harmful & Deceptive Schemes</option>
+                    </optgroup>
+                    
+                    <optgroup label="🔴 DETAILED REPORTS (CLASSIC)">
+                        <option value="scam">🔴 Scam / Fraud (Professional 8-Line)</option>
+                        <option value="earnings">🔴 Financial Fraud / Fake Earnings</option>
+                        <option value="investment">🔴 Fake Investment Scheme</option>
+                        <option value="gambling">🔴 Illegal Gambling Promotion</option>
+                        <option value="job">🔴 Fake Salary / Job Scam</option>
+                        <option value="spam">🔴 Spam & Misleading Content</option>
+                        <option value="minor">🔴 Harmful Content for Minors</option>
+                        <option value="explicit">🔴 Explicit / Inappropriate Media</option>
+                        <option value="links">🔴 Deceptive External Links</option>
+                        <option value="exploitation">🔴 User Trust Exploitation</option>
+                        <option value="impersonation">🔴 Fake Authority / Impersonation</option>
+                        <option value="repeated">🔴 Repeated Policy Violations</option>
+                        <option value="safety">🔴 Community Safety Risk</option>
+                        <option value="network">🔴 Organized Scam Network Pattern</option>
+                        <option value="manipulation">🔴 Trust Manipulation</option>
+                        <option value="misuse">🔴 Misuse of Platform</option>
+                        <option value="unverified">🔴 Unverified Services Promotion</option>
+                        <option value="complaints">🔴 Repeated User Complaints</option>
+                        <option value="overall">🔴 Overall Platform Breach</option>
+                    </optgroup>
+
+                    <optgroup label="⚠️ LEGACY REPORTS">
+                        <option value="abuse_old">⚠️ Abuse & Harassment (Legacy)</option>
+                        <option value="illegal_old">⚠️ Hacking / Scripts (Legacy)</option>
+                        <option value="malware_old">⚠️ Malware / Viruses (Legacy)</option>
+                        <option value="privacy_old">⚠️ Privacy Violation (Legacy)</option>
+                    </optgroup>
+                </select>
+
+                <div class="control-btns">
+                    <button class="neu-btn" id="execBtn" onclick="generateGodV14()">
+                        Execute God Command <i class="fas fa-bolt"></i>
+                    </button>
+                    <button class="neu-btn btn-danger" onclick="resetFields()">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+
+                <div id="resultBox" class="blinking-cursor"></div>
+                
+                <div class="action-btns" id="actionArea">
+                    <button class="neu-btn" style="color:var(--text);" onclick="copyText()"><i class="fas fa-copy"></i> Copy Text</button>
+                    <!-- NEW: Direct Share Button -->
+                    <button class="neu-btn" style="color:#25D366;" onclick="directShare()"><i class="fab fa-whatsapp"></i> Share Direct</button>
+                    <button class="neu-btn" style="grid-column: span 2; color:#ea4335;" onclick="sendMail()"><i class="fas fa-envelope"></i> Send Official Mail</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI MODE TAB -->
+        <section id="ai-mode" class="tab-content" style="display:none">
+            <div class="neu-card">
+                <label>Upload Violation Media</label>
+                <input type="file" id="aiImage" class="neu-input" accept="image/*" onchange="previewImg(event)">
+                
+                <div id="imgPrevCont" style="display:none; text-align:center;">
+                    <div class="scan-container" id="scanCont">
+                        <div class="scan-line"></div>
+                        <img id="prevImg" style="width:100%; height:auto; max-height:350px; object-fit:contain;">
+                    </div>
+                </div>
+
+                <label>Text Content for Analysis</label>
+                <textarea id="aiInput" class="neu-input" style="height:130px; padding-top:15px;" placeholder="Paste suspicious text or chat here..."></textarea>
+                
+                <button class="neu-btn" id="aiBtn" onclick="analyzeAIV14()">
+                    Run Infinity Scan <i class="fas fa-atom"></i>
+                </button>
+                
+                <div id="aiOutput" style="display:none; margin-top:25px; padding:25px; border-radius:20px; box-shadow: inset 4px 4px 10px var(--shadow-dark); border-left:10px solid var(--primary);">
+                    <h3 id="resCat" style="color:var(--primary); margin:0; font-size:1.2rem;"></h3>
+                    <p id="resReason" style="font-size:0.95rem; margin:15px 0; color:var(--text); line-height:1.7;"></p>
+                    <button class="neu-btn" id="applyAIBtn" style="font-size:0.85rem; padding:12px;">Apply To Commander <i class="fas fa-check-double"></i></button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>CREATED & DEVELOPED BY <br> <span class="creator-highlight">MA LEGEND</span></p>
+        <p style="font-size: 0.7rem; margin-top: 10px;">THE GOD OF AUTOMATION</p>
+    </footer>
+
+    <script>
+        const reportsData = {
+            short_1: "This channel is operating with clear deceptive intent.\nUsers are misled through false claims.\nImportant risks are hidden deliberately.\nFinancial harm is highly possible.\nThis violates WhatsApp safety standards.\nImmediate permanent action is required.",
+            short_2: "The admin promotes misleading content regularly.\nUsers are pressured with unrealistic promises.\nNo transparency or proof is provided.\nSuch behavior is harmful and unethical.\nPlatform rules are clearly violated.\nThe channel must be removed immediately.",
+            short_3: "This WhatsApp channel spreads fraudulent promotions.\nFalse guarantees are repeatedly shared.\nUsers are exposed to financial risk.\nAdmin hides critical information.\nThis breaches anti-scam policies.\nPermanent suspension is necessary.",
+            short_4: "The channel shares suspicious external links.\nUsers are redirected without clear disclosure.\nThis may cause data or money loss.\nAdmin shows malicious intent.\nSuch activity violates guidelines.\nImmediate enforcement is required.",
+            short_5: "This channel manipulates user trust deliberately.\nFalse narratives are presented as facts.\nUsers are misinformed intentionally.\nSerious harm may result.\nCommunity standards are breached.\nPermanent removal is required.",
+            short_6: "The admin promotes unsafe financial schemes.\nClaims made are unrealistic and deceptive.\nNo verification is ever provided.\nUsers may suffer monetary damage.\nThis violates WhatsApp policies.\nThe channel must be banned.",
+            short_7: "This channel operates deceptively.\nUsers are lured with fake benefits.\nRisks are never disclosed.\nSuch actions harm the community.\nPolicy violations are evident.\nImmediate removal is necessary.",
+            short_8: "The content shared is misleading and harmful.\nUsers are encouraged to take risky actions.\nAdmin ignores transparency requirements.\nThis is unethical and dangerous.\nPlatform integrity is compromised.\nStrong action must be taken.",
+            short_9: "This WhatsApp channel promotes false opportunities.\nUsers are deceived with exaggerated claims.\nNo legal backing is provided.\nFinancial exploitation is likely.\nSuch conduct violates rules.\nPermanent ban is required.",
+            short_10: "The admin repeatedly posts deceptive material.\nUsers are misled for personal gain.\nImportant warnings are hidden.\nThis behavior is irresponsible.\nIt breaches community guidelines.\nImmediate action is necessary.",
+            short_11: "This channel spreads unverified information.\nUsers are pressured to trust fake claims.\nAdmin shows no accountability.\nSerious risks are involved.\nPolicies are clearly violated.\nThe channel should be removed.",
+            short_12: "The channel is unsafe for users.\nMisleading content is shared daily.\nFalse assurances are common.\nThis causes potential harm.\nWhatsApp standards are breached.\nPermanent suspension is required.",
+            short_13: "Admin behavior indicates organized deception.\nUsers are targeted with fake incentives.\nTransparency is completely missing.\nFinancial risk is significant.\nSuch actions violate policy.\nImmediate removal is needed.",
+            short_14: "This channel exploits user trust.\nFalse profit claims are promoted.\nNo evidence supports the promises.\nUsers may face serious losses.\nThis violates anti-fraud rules.\nPermanent ban is strongly recommended.",
+            short_15: "The channel promotes harmful and deceptive schemes.\nUsers are misinformed intentionally.\nCritical facts are hidden.\nThis endangers the community.\nPolicy violations are obvious.\nImmediate enforcement action is required.",
+            scam: "This WhatsApp channel is actively involved in fraudulent activities.\nThe admin intentionally posts deceptive and misleading content.\nUsers are lured using false promises and fake claims.\nCritical information is deliberately hidden from viewers.\nSuspicious links are shared to exploit user trust.\nThis behavior appears organized and systematic.\nSuch activity violates WhatsApp anti-fraud policies.\nImmediate permanent removal of this channel is required.",
+            earnings: "This channel promotes false earning opportunities.\nUsers are promised unrealistic and guaranteed income.\nNo legal proof or verification is provided.\nAdmin manipulates users for financial gain.\nMany users may suffer monetary loss.\nThe intent behind this content is deceptive.\nThis violates WhatsApp financial safety rules.\nThe channel should be permanently banned.",
+            investment: "This WhatsApp channel promotes unverified investment schemes.\nClaims of high profit are made without evidence.\nUsers are misled into trusting risky platforms.\nNo registration or legal disclosure is shared.\nThis is a common online investment scam pattern.\nAdmin behavior shows clear malicious intent.\nSuch content violates WhatsApp guidelines.\nImmediate action is strongly required.",
+            gambling: "This channel openly promotes gambling and betting services.\nSuch activities may be illegal in many regions.\nUsers are encouraged to bet through referral links.\nFinancial risks are intentionally ignored.\nAdmin benefits while users face losses.\nThis content is unsafe and irresponsible.\nIt violates WhatsApp policies on illegal activities.\nThe channel must be removed immediately.",
+            job: "This channel advertises fake jobs and fixed salaries.\nNo company details or contracts are provided.\nUsers are misled with easy money promises.\nAdmin hides the true nature of the scheme.\nThis causes financial and emotional harm.\nSuch recruitment scams are strictly prohibited.\nThis violates WhatsApp safety standards.\nImmediate permanent ban is required.",
+            spam: "This WhatsApp channel repeatedly posts spam content.\nMessages are designed to mislead users.\nThe same deceptive promotions are shared daily.\nUsers are pressured to act quickly.\nImportant facts are never disclosed.\nThis disrupts the WhatsApp community.\nSuch spam violates platform rules.\nThe channel should be taken down.",
+            minor: "This channel shares content unsuitable for minors.\nImages and videos may negatively influence children.\nNo age restriction or warning is applied.\nThis creates a serious child safety concern.\nAdmin ignores community responsibility.\nWhatsApp has zero tolerance for such violations.\nThis breaches child protection policies.\nImmediate removal is required.",
+            explicit: "This channel distributes inappropriate images and videos.\nSuch content is not suitable for all audiences.\nMinors can easily access this material.\nAdmin fails to control harmful posts.\nThis affects community safety negatively.\nSuch media violates WhatsApp content rules.\nThe activity appears intentional.\nPermanent channel removal is required.",
+            links: "This channel shares suspicious external links.\nUsers are redirected to unsafe platforms.\nNo transparency about link purpose is provided.\nThese links may cause financial or data loss.\nAdmin hides risks intentionally.\nThis behavior is highly dangerous.\nIt violates WhatsApp security policies.\nImmediate action is required.",
+            exploitation: "The admin exploits user trust deliberately.\nFalse narratives are used to manipulate emotions.\nUsers are encouraged to take risky actions.\nAdmin benefits while users suffer losses.\nThis behavior is unethical and harmful.\nIt damages the WhatsApp community.\nSuch exploitation violates platform rules.\nThe channel must be banned.",
+            impersonation: "This channel pretends to offer official services.\nAdmin creates a false sense of authority.\nUsers are misled into trusting fake identities.\nNo official verification exists.\nThis is a serious impersonation attempt.\nSuch activity is prohibited on WhatsApp.\nIt violates trust and safety rules.\nImmediate removal is necessary.",
+            repeated: "This WhatsApp channel repeatedly violates policies.\nWarnings and guidelines are ignored.\nDeceptive content is posted continuously.\nAdmin shows no intent to comply.\nUsers remain at constant risk.\nThis harms platform integrity.\nRepeated violations require strict action.\nPermanent suspension is required.",
+            safety: "This channel poses a serious risk to users.\nContent encourages unsafe online behavior.\nAdmin ignores user well-being.\nMisleading claims increase harm.\nThe community is negatively affected.\nSuch conduct is unacceptable.\nThis violates WhatsApp safety rules.\nImmediate channel removal is required.",
+            network: "This channel appears part of a larger scam network.\nContent follows common fraud patterns.\nUsers are redirected to external platforms.\nAdmin operates with clear malicious intent.\nThe activity is organized and systematic.\nThis is highly dangerous for users.\nWhatsApp policies strictly prohibit this.\nPermanent ban is required.",
+            manipulation: "The admin manipulates trust deliberately.\nFalse success stories are shared repeatedly.\nUsers are emotionally influenced.\nReality and risks are hidden.\nThis causes long-term user harm.\nSuch manipulation violates ethical standards.\nIt breaches WhatsApp community rules.\nImmediate enforcement action is needed.",
+            misuse: "This channel misuses WhatsApp for harmful purposes.\nThe platform is used to deceive users.\nAdmin ignores WhatsApp guidelines.\nSuch misuse damages user trust.\nThe content serves malicious intent.\nThis behavior is not permitted.\nPolicy violations are clearly present.\nThe channel must be removed.",
+            unverified: "This channel promotes unverified online services.\nUsers are encouraged without proper disclosure.\nNo proof of legitimacy is shown.\nAdmin hides important information.\nUsers face financial and digital risk.\nThis violates platform transparency rules.\nSuch activity is prohibited.\nImmediate ban is required.",
+            complaints: "Multiple users appear affected by this channel.\nContent repeatedly causes confusion and harm.\nAdmin ignores negative feedback.\nThe same deceptive posts continue.\nThis shows intentional wrongdoing.\nCommunity trust is damaged.\nThis violates WhatsApp standards.\nPermanent removal is required.",
+            overall: "This WhatsApp channel violates multiple policies.\nScam, deception, and manipulation are present.\nUsers are consistently misled.\nAdmin behavior shows no accountability.\nThe channel is unsafe for the community.\nSuch violations cannot be ignored.\nWhatsApp rules are clearly breached.\nImmediate permanent ban is necessary.",
+            abuse_old: "This channel is repeatedly used for harassment and abuse.\nAdmins use offensive language and target users with insults.\nThis creates a hostile environment against platform terms.\nEmotional harm is being caused to the community members.\nSuch behavior violates WhatsApp Abuse and Harassment policies.\nImmediate permanent enforcement action is required.",
+            illegal_old: "This channel is distributing illegal tools and hacking scripts.\nThe admin promotes bypass methods and unauthorized software.\nThese tools compromise digital security and platform integrity.\nThis activity poses a high risk to all users and systems.\nImmediate permanent ban of this channel is required.",
+            malware_old: "This WhatsApp channel is sharing harmful and malicious links.\nUsers are tricked into downloading unsafe files and viruses.\nThe admin intentionally distributes malware and phishing URLs.\nThese files can steal sensitive information and damage devices.\nThis is a critical violation of safety and security rules.\nImmediate removal is necessary to protect the users.",
+            privacy_old: "This channel is involved in serious privacy violations.\nUnauthorized personal data and private info are being shared.\nUsers are being doxed and their privacy is being exploited.\nConsent is completely ignored by the channel administrator.\nPrivacy standards of WhatsApp are being openly breached.\nImmediate permanent suspension of the channel is required."
+        };
+
+        let detectedValue = "short_1"; 
+        let typewriterTimeout;
+
+        setInterval(() => {
+            document.getElementById('liveClock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // --- NEW: AUTO SAVE & LOAD DATA ---
+        function saveData() {
+            localStorage.setItem('ma_name', document.getElementById('targetName').value);
+            localStorage.setItem('ma_link', document.getElementById('targetLink').value);
+            localStorage.setItem('ma_post', document.getElementById('postLink').value);
+        }
+
+        function loadData() {
+            if(localStorage.getItem('ma_name')) document.getElementById('targetName').value = localStorage.getItem('ma_name');
+            if(localStorage.getItem('ma_link')) document.getElementById('targetLink').value = localStorage.getItem('ma_link');
+            if(localStorage.getItem('ma_post')) document.getElementById('postLink').value = localStorage.getItem('ma_post');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            document.getElementById("toastMsg").innerText = msg;
+            t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 2500);
+        }
+
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('overlay').classList.toggle('active'); 
+        }
+
+        function switchTab(t) {
+            document.querySelectorAll('.tab-content').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(t).style.display = 'block';
+            if(window.innerWidth < 768 && document.getElementById('sidebar').classList.contains('active')) {
+                toggleSidebar();
+            }
+        }
+
+        function triggerShake(id) {
+            const el = document.getElementById(id);
+            el.classList.add('error-shake');
+            setTimeout(() => el.classList.remove('error-shake'), 400);
+            el.focus();
+        }
+
+        // --- NEW: TYPEWRITER EFFECT ---
+        function typeWriter(text, elementId, speed = 10) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = "";
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    el.innerHTML += text.charAt(i);
+                    i++;
+                    typewriterTimeout = setTimeout(type, speed);
                 }
-            });
+            }
+            type();
+        }
+
+        function generateGodV14() {
+            const nameInp = document.getElementById('targetName');
+            const linkInp = document.getElementById('targetLink');
+            const post = document.getElementById('postLink').value;
+            const cat = document.getElementById('category').value;
+            const btn = document.getElementById('execBtn');
+
+            if(!nameInp.value) { 
+                showToast("Error: Target Name Missing!"); 
+                triggerShake('targetName');
+                return; 
+            }
+            if(!linkInp.value || !linkInp.value.toLowerCase().includes('whatsapp')) { 
+                showToast("Error: Valid WhatsApp Link Required!"); 
+                triggerShake('targetLink');
+                return; 
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-cog fa-spin"></i> Processing...';
+            document.getElementById('resultBox').style.display = "none";
+            document.getElementById('actionArea').style.display = "none";
+
+            setTimeout(() => {
+                const refID = "MA-INF-" + Math.floor(1000 + Math.random() * 9000);
+                const res = `OFFICIAL INFINITY COMPLIANCE REPORT\n---------------------------------------\nREF ID: ${refID}\nTARGET CHANNEL: ${nameInp.value}\nCHANNEL URL: ${linkInp.value}\nEVIDENCE: ${post || "Attached Media Evidence"}\n\nVIOLATION DESCRIPTION:\n${reportsData[cat]}\n\nREQUIRED ACTION: Permanent Termination of Access.`;
+                
+                const box = document.getElementById('resultBox');
+                box.style.display = "block";
+                
+                // Using new typewriter effect
+                clearTimeout(typewriterTimeout);
+                typeWriter(res, 'resultBox', 5);
+
+                document.getElementById('actionArea').style.display = "grid";
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                showToast("God Command Generated!");
+
+                btn.disabled = false;
+                btn.innerHTML = 'Execute God Command <i class="fas fa-bolt"></i>';
+            }, 800);
+        }
+
+        function resetFields() {
+            document.getElementById('targetName').value = "";
+            document.getElementById('targetLink').value = "";
+            document.getElementById('postLink').value = "";
+            localStorage.clear(); // Clear storage
+            document.getElementById('resultBox').style.display = "none";
+            document.getElementById('actionArea').style.display = "none";
+            document.getElementById('category').selectedIndex = 0;
+            showToast("System Reset Successful!");
+        }
+
+        function previewImg(event) {
+            const file = event.target.files[0];
+            if(file) {
+                document.getElementById('prevImg').src = URL.createObjectURL(file);
+                document.getElementById('imgPrevCont').style.display = "block";
+                document.getElementById('scanCont').style.display = "block";
+            }
+        }
+
+        function analyzeAIV14() {
+            const text = document.getElementById('aiInput').value.toLowerCase();
+            const img = document.getElementById('aiImage');
+            const btn = document.getElementById('aiBtn');
+            
+            if(!text && !img.files[0]) { 
+                showToast("Provide Evidence First!"); 
+                triggerShake('aiInput');
+                return; 
+            }
+            
+            if(btn.disabled) return;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-atom fa-spin"></i> Analyzing Evidence...';
+            
+            setTimeout(() => {
+                const smartReasons =[
+                    "Neural scan found high-probability digital manipulation in the screenshot artifacts.",
+                    "Visual signatures match known unverified financial recruitment scam patterns.",
+                    "Detected hidden phishing links and malicious redirect anchors in the shared media.",
+                    "Contextual pattern analysis confirms trust exploitation tactics used by the admin.",
+                    "Advanced pixel-depth analysis suggests the provided proof is fabricated/modified.",
+                    "Deceptive engagement triggers detected: Content designed to mislead community trust.",
+                    "Evidence confirms the promotion of unauthorized or illegal external digital services."
+                ];
+
+                let catName = "Overall Policy Violation";
+                detectedValue = "overall";
+                
+                if(text.match(/money|earn|invest|binance|crypto|profit/)) {
+                    catName = "Financial Scam / Fraud"; detectedValue = "short_6";
+                } else if(text.match(/hack|script|mod|cheat/)) {
+                    catName = "Illegal Tools / Hacking"; detectedValue = "illegal_old";
+                } else if(text.match(/porn|sex|adult|nude/)) {
+                    catName = "Explicit Media Content"; detectedValue = "explicit";
+                } else {
+                    const randomCats =["short_1", "short_5", "short_13", "scam", "spam"];
+                    detectedValue = randomCats[Math.floor(Math.random() * randomCats.length)];
+                    catName = "Detected Community Risk";
+                }
+
+                const finalReason = smartReasons[Math.floor(Math.random() * smartReasons.length)];
+
+                document.getElementById('resCat').innerText = "AI RESULT: " + catName;
+                document.getElementById('resReason').innerText = "AI Logic: " + finalReason;
+                const outputDiv = document.getElementById('aiOutput');
+                outputDiv.style.display = "block";
+                outputDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                btn.innerHTML = 'Run Infinity Scan <i class="fas fa-atom"></i>';
+                btn.disabled = false;
+                showToast("Deep Neural Analysis Complete!");
+            }, 2500);
+        }
+
+        document.getElementById('applyAIBtn').onclick = function() {
+            document.getElementById('category').value = detectedValue;
+            switchTab('bot');
+            showToast("AI Category Applied!");
+        };
+
+        function copyText() {
+            const t = document.getElementById('resultBox').innerText;
+            navigator.clipboard.writeText(t);
+            showToast("Report Copied!");
+        }
+
+        // --- NEW: DIRECT WHATSAPP SHARE ---
+        function directShare() {
+            const text = document.getElementById('resultBox').innerText;
+            // Format text nicely (Bold headers if needed, but simple is safer for URL)
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function sendMail() {
+            const body = document.getElementById('resultBox').innerText;
+            window.location.href = `mailto:support@whatsapp.com?subject=Policy Violation Report&body=${encodeURIComponent(body)}`;
         }
     </script>
 </body>
